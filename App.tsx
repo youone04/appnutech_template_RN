@@ -16,6 +16,7 @@ import LoginScreen from '@screens/LoginScreen';
 import HomeScreen from '@screens/HomeScreen';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import RegistrasiScreen from '@screens/RegistrasiScreen';
+import TopUpScreen from '@screens/TopUp';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -25,6 +26,12 @@ const HomeStack = () => (
     <Stack.Screen name="Home" component={HomeScreen} />
   </Stack.Navigator>
 );
+
+const TopUpStack = () => (
+  <Stack.Navigator screenOptions={{headerShown: false}}>
+    <Stack.Screen name='TopUp' component={TopUpScreen} />
+  </Stack.Navigator>
+)
 
 
 const AppNavigator = () => (
@@ -37,10 +44,8 @@ const AppNavigator = () => (
           iconName = 'home';
         } else if (route.name === 'TopUp') {
           iconName = 'cash';
-        } else if (route.name === 'Transaction') {
-          iconName = 'list';
-        } else if (route.name === 'Account') {
-          iconName = 'person';
+        }else{
+          iconName = 'cash'
         }
 
         return <Icon name={iconName as any} size={size} color={color} />;
@@ -48,6 +53,9 @@ const AppNavigator = () => (
     })}
   >
     <Tab.Screen name="Home" component={HomeStack} />
+    <Tab.Screen name="TopUp" component={TopUpStack}/>
+    <Tab.Screen name="Trasnsaction" component={TopUpStack}/>
+    <Tab.Screen name="Profile" component={TopUpStack}/>
   </Tab.Navigator>
 );
 
@@ -59,7 +67,7 @@ const AuthStack = () => (
 );
 
 const RootNavigator = () => {
-  const isLoggedIn: boolean = false;
+  const isLoggedIn: boolean = true;
 
   return (
     <NavigationContainer>
@@ -72,7 +80,6 @@ const RootNavigator = () => {
   );
 };
 const App: React.FC = () => {
-
   return (
     <RootNavigator />
   );
