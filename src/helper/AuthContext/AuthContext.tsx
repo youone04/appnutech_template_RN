@@ -8,7 +8,7 @@ type AuthContextType = {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider: React.FC = ({ children }) => {
+export const AuthProvider: React.FC<{ children: any }> = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const login = () => setIsLoggedIn(true);

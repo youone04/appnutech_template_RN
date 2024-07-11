@@ -1,16 +1,19 @@
 import React from 'react';
-import { View, TextInput, StyleSheet, ViewStyle, TextStyle} from 'react-native';
+import { View, TextInput, StyleSheet, ViewStyle, TextStyle, KeyboardType} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-interface FieldProps {
+type FieldProps =  {
     placeholder?: string;
     iconName : string;
     styleTextInput?: TextStyle;
     styleContainer?: ViewStyle;
     styleIcon?: TextStyle;
     count?: number;
+    keyboardType?: KeyboardType;
+    secureTextEntry?: boolean;
     onClick?: () => void;
   } 
+
 const FieldWithIcon: React.FC<FieldProps> = (data) => {
     return(
         <View style={[styles.container , data.styleContainer]}>
@@ -19,7 +22,8 @@ const FieldWithIcon: React.FC<FieldProps> = (data) => {
             style={[styles.input, data.styleTextInput]}
             placeholder={data.placeholder}
             placeholderTextColor="#aaa"
-            keyboardType="email-address"
+            keyboardType={data.keyboardType}
+            secureTextEntry={data.secureTextEntry}
         />
     </View>
     )
