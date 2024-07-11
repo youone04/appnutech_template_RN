@@ -2,7 +2,7 @@ import FieldWithIcon from '@components/atoms/FieldWithIcon';
 import React from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
 
-const LoginScreen: React.FC <{navigation: any}>= ({navigation}) => {
+const RegistrasiScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     return (
         <View style={styles.container}>
             <View style={styles.banner}>
@@ -10,24 +10,39 @@ const LoginScreen: React.FC <{navigation: any}>= ({navigation}) => {
                 <Text style={styles.title}>SIMS PPOB</Text>
             </View>
 
-            <Text style={styles.subtitle}>Masuk atau buat akun untuk memulai</Text>
+            <Text style={styles.subtitle}>Lengkapi data untuk membuat akun</Text>
 
             <FieldWithIcon
                 placeholder="masukan email anda"
                 iconName="leftcircle"
             />
+
             <FieldWithIcon
-                placeholder="masukan pasword anda"
+                placeholder="nama depan"
                 iconName="leftcircle"
-                keyboardType='email-address'
+            />
+
+            <FieldWithIcon
+                placeholder="nama belakang"
+                iconName="leftcircle"
+            />
+
+            <FieldWithIcon
+                placeholder="buat password"
+                iconName="leftcircle"
+                secureTextEntry={true}
+            />
+            <FieldWithIcon
+                placeholder="konfirmasi password"
+                iconName="leftcircle"
                 secureTextEntry={true}
             />
             <TouchableOpacity style={styles.button}>
-                <Text style={styles.buttonText}>Masuk</Text>
+                <Text style={styles.buttonText}>Registasi</Text>
             </TouchableOpacity>
 
             <Text style={styles.registerText}>
-                belum punya akun? <Text onPress={() => navigation.navigate('Register')} style={styles.registerLink}>registrasi di sini</Text>
+                sudah punya akun? <Text onPress={() => navigation.navigate('Login')} style={styles.registerLink}>login di sini</Text>
             </Text>
         </View>
     );
@@ -99,4 +114,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default LoginScreen;
+export default RegistrasiScreen;

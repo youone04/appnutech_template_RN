@@ -15,20 +15,23 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoginScreen from '@screens/LoginScreen';
 import HomeScreen from '@screens/HomeScreen';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import RegistrasiScreen from '@screens/RegistrasiScreen';
+import TopUpScreen from '@screens/TopUp';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
 const HomeStack = () => (
-  <Stack.Navigator screenOptions={{headerShown: false}}>
+  <Stack.Navigator screenOptions={{ headerShown: false }}>
     <Stack.Screen name="Home" component={HomeScreen} />
   </Stack.Navigator>
 );
-const LoginStack = () => (
+
+const TopUpStack = () => (
   <Stack.Navigator screenOptions={{headerShown: false}}>
-    <Stack.Screen name="Login" component={LoginScreen} />
+    <Stack.Screen name='TopUp' component={TopUpScreen} />
   </Stack.Navigator>
-);
+)
 
 
 const AppNavigator = () => (
@@ -41,10 +44,8 @@ const AppNavigator = () => (
           iconName = 'home';
         } else if (route.name === 'TopUp') {
           iconName = 'cash';
-        } else if (route.name === 'Transaction') {
-          iconName = 'list';
-        } else if (route.name === 'Account') {
-          iconName = 'person';
+        }else{
+          iconName = 'cash'
         }
 
         return <Icon name={iconName as any} size={size} color={color} />;
@@ -52,32 +53,41 @@ const AppNavigator = () => (
     })}
   >
     <Tab.Screen name="Home" component={HomeStack} />
-    <Tab.Screen name="Login" component={LoginStack} />
+    <Tab.Screen name="TopUp" component={TopUpStack}/>
+    <Tab.Screen name="Trasnsaction" component={TopUpStack}/>
+    <Tab.Screen name="Profile" component={TopUpStack}/>
   </Tab.Navigator>
 );
 
+const AuthStack = () => (
+  <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Screen name="Login" component={LoginScreen} />
+    <Stack.Screen name="Register" component={RegistrasiScreen} />
+  </Stack.Navigator>
+);
+
 const RootNavigator = () => {
-  const isLoggedIn: boolean = false;
+  const isLoggedIn: boolean = true;
 
   return (
     <NavigationContainer>
       {isLoggedIn ? (
         <AppNavigator />
       ) : (
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="Login" component={LoginStack} />
-        </Stack.Navigator>
+        <AuthStack />
       )}
     </NavigationContainer>
   );
 };
 const App: React.FC = () => {
-
   return (
-    <RootNavigator/>
+    <RootNavigator />
   );
 }
-
+//penggunaan auth helper
+{/* <AuthProvider>
+      <RootNavigator />
+    </AuthProvider> */}
 
 
 export default App;
