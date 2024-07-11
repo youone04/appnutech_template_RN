@@ -4,16 +4,77 @@
  *
  * @format
  */
-import LoginScreen from '@screens/LoginScreen';
+import { enableScreens } from 'react-native-screens';
+
+enableScreens(false);
 import React from 'react';
 
-function App(): React.JSX.Element {
+import { NavigationContainer } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import LoginScreen from '@screens/LoginScreen';
+import HomeScreen from '@screens/HomeScreen';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
+const Tab = createBottomTabNavigator();
+const Stack = createNativeStackNavigator();
+
+const HomeStack = () => (
+  <Stack.Navigator screenOptions={{headerShown: false}}>
+    <Stack.Screen name="Home" component={HomeScreen} />
+  </Stack.Navigator>
+);
+const LoginStack = () => (
+  <Stack.Navigator screenOptions={{headerShown: false}}>
+    <Stack.Screen name="Login" component={LoginScreen} />
+  </Stack.Navigator>
+);
+
+
+const AppNavigator = () => (
+  <Tab.Navigator
+    screenOptions={({ route }) => ({
+      tabBarIcon: ({ color, size }) => {
+        let iconName;
+
+        if (route.name === 'Home') {
+          iconName = 'home';
+        } else if (route.name === 'TopUp') {
+          iconName = 'cash';
+        } else if (route.name === 'Transaction') {
+          iconName = 'list';
+        } else if (route.name === 'Account') {
+          iconName = 'person';
+        }
+
+        return <Icon name={iconName as any} size={size} color={color} />;
+      },
+    })}
+  >
+    <Tab.Screen name="Home" component={HomeStack} />
+    <Tab.Screen name="Login" component={LoginStack} />
+  </Tab.Navigator>
+);
+
+const RootNavigator = () => {
+  const isLoggedIn: boolean = false;
 
   return (
-   <>
-   <LoginScreen/>
-   </>
+    <NavigationContainer>
+      {isLoggedIn ? (
+        <AppNavigator />
+      ) : (
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="Login" component={LoginStack} />
+        </Stack.Navigator>
+      )}
+    </NavigationContainer>
+  );
+};
+const App: React.FC = () => {
+
+  return (
+    <RootNavigator/>
   );
 }
 

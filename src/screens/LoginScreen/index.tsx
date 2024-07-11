@@ -5,8 +5,11 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'reac
 const LoginScreen: React.FC = () => {
     return (
         <View style={styles.container}>
-            {/* <Image source={require('./path-to-your-logo.png')} style={styles.logo} /> */}
-            <Text style={styles.title}>SIMS PPOB</Text>
+            <View style={styles.banner}>
+                <Image source={require('@assets/logos/Logo.png')} style={styles.logo} />
+                <Text style={styles.title}>SIMS PPOB</Text>
+            </View>
+
             <Text style={styles.subtitle}>Masuk atau buat akun untuk memulai</Text>
 
             <TextInput
@@ -18,6 +21,7 @@ const LoginScreen: React.FC = () => {
             <FieldWithIcon
                 placeholder="masukan email anda"
                 iconName="leftcircle"
+                styleIcon={{}}
             />
             <TouchableOpacity style={styles.button}>
                 <Text style={styles.buttonText}>Masuk</Text>
@@ -31,6 +35,10 @@ const LoginScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
+    banner: {
+        flexDirection: 'row', // Arrange children in a row
+        alignItems: 'center',
+    },
     icon: {
         marginRight: 10,
     },
@@ -45,16 +53,17 @@ const styles = StyleSheet.create({
         width: 50,
         height: 50,
         marginBottom: 20,
+        marginHorizontal: 10
     },
     title: {
-        fontSize: 24,
-        fontWeight: 'bold',
+        fontSize: 25,
         color: '#000',
         marginBottom: 10,
     },
     subtitle: {
-        fontSize: 16,
+        fontSize: 30,
         color: '#000',
+        fontWeight: 'bold',
         marginBottom: 30,
         textAlign: 'center',
     },
