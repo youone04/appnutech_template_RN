@@ -12,6 +12,7 @@ import RegistrasiScreen from '@screens/RegistrasiScreen';
 import TopUpScreen from '@screens/TopUp';
 import PembayaranScreen from '@screens/PembayaranScreen';
 import TransactionScreen from '@screens/TransactionScreen';
+import ProfileScreen from '@screens/ProfileScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -35,7 +36,7 @@ const AppNavigator = () => (
     <Tab.Screen name="Home" component={HomeScreen} />
     <Tab.Screen name="TopUp" component={TopUpScreen} />
     <Tab.Screen name="Trasnsaction" component={TransactionScreen} />
-    <Tab.Screen name="Profile" component={TopUpScreen} />
+    <Tab.Screen name="Profile" component={ProfileScreen} />
   </Tab.Navigator>
 );
 
