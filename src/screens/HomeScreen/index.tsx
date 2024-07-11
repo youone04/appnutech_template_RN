@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
   servicesGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-around',
+    justifyContent:'flex-start',
     padding: 16,
   },
   serviceItem: {
