@@ -2,7 +2,7 @@ import FieldWithIcon from '@components/atoms/FieldWithIcon';
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
-const TopUpScreen: React.FC = () => {
+const TopUpScreen: React.FC<{ navigation: any }> = ({navigation}) => {
   const [balance, setBalance] = useState<number>(0);
   const [topUpAmount, setTopUpAmount] = useState<string>('');
 
@@ -41,7 +41,7 @@ const TopUpScreen: React.FC = () => {
 
       <TouchableOpacity
         style={styles.topUpButton}
-        onPress={() => handleTopUp(Number(topUpAmount))}
+        onPress={() => navigation.navigate('Pembayaran')}
       >
         <Text style={styles.topUpButtonText}>Top Up</Text>
       </TouchableOpacity>
