@@ -8,13 +8,13 @@ interface FieldProps {
     styleTextInput?: TextStyle;
     styleContainer?: ViewStyle;
     styleIcon?: TextStyle;
-    // count: number;
-    // onClick: () => void;
+    count?: number;
+    onClick?: () => void;
   } 
 const FieldWithIcon: React.FC<FieldProps> = (data) => {
     return(
         <View style={[styles.container , data.styleContainer]}>
-        <Icon name={data.iconName} size={20} color="#aaa" style={[styles.icon, data.styleIcon]} />
+        <Icon name={data.iconName} size={20} color="#aaa" style={[styles.icon]} />
         <TextInput
             style={[styles.input, data.styleTextInput]}
             placeholder={data.placeholder}
