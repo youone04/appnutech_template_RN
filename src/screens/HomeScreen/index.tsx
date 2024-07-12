@@ -1,13 +1,22 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity, ImageSourcePropType } from 'react-native';
+import { View, Text, Image, StyleSheet, ScrollView, 
+  Dimensions,
+  TouchableOpacity, ImageSourcePropType } from 'react-native';
+
+const { width: screenWidth } = Dimensions.get('window');
 
 const HomeScreen : React.FC = () => {
+
+
   return (
     <View style={styles.container}>
       <ScrollView>
         {/* Header */}
         <View style={styles.header}>
+          <View style={{flexDirection: 'row', alignItems:'center'}}>
           <Image source={require('@assets/logos/Logo.png')} style={styles.logo} />
+          <Text style={{marginLeft:8}}>SIMS PPOB</Text>
+          </View>
           <Image source={{ uri: 'https://randomuser.me/api/portraits/men/1.jpg' }} style={styles.userIcon} />
         </View>
 
@@ -44,17 +53,22 @@ const HomeScreen : React.FC = () => {
         </View>
 
         {/* Promotional Banners */}
-        <View style={styles.promoContainer}>
+        <Text style={{paddingLeft: 25, fontWeight:'bold'}}>Tentukan Promo Menarik</Text>
+        <ScrollView 
+         horizontal
+         pagingEnabled
+         showsHorizontalScrollIndicator={false}
+        style={styles.promoContainer}>
           {[
             { image: require('@assets/banner/Banner1.png'), text: 'Saldo Gratis!' },
             { image: require('@assets/banner/Banner2.png'), text: 'Diskon Listrik!' },
           ].map((promo, index) => (
             <View key={index} style={styles.promoItem}>
               <Image source={promo.image as ImageSourcePropType} style={styles.promoImage} />
-              <Text style={styles.promoText}>{promo.text}</Text>
             </View>
           ))}
-        </View>
+        </ScrollView>
+
       </ScrollView>
     </View>
   );
@@ -72,8 +86,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
   },
   logo: {
-    width: 50,
-    height: 50,
+    width: 25,
+    height: 25,
   },
   userIcon: {
     width: 40,
@@ -96,11 +110,11 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     margin: 16,
     padding: 16,
-    alignItems: 'center',
   },
   balanceText: {
     color: '#ffffff',
     fontSize: 16,
+    fontWeight:'bold'
   },
   balanceAmount: {
     color: '#ffffff',
@@ -109,13 +123,11 @@ const styles = StyleSheet.create({
     marginVertical: 8,
   },
   balanceButton: {
-    backgroundColor: '#ffffff',
     borderRadius: 20,
-    paddingHorizontal: 16,
     paddingVertical: 8,
   },
   balanceButtonText: {
-    color: '#ff5252',
+    color: '#ffffff',
   },
   servicesGrid: {
     flexDirection: 'row',
@@ -137,13 +149,13 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   promoContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
+    width: screenWidth,
     padding: 16,
   },
   promoItem: {
-    width: '45%',
+    width: 230,
     alignItems: 'center',
+    marginHorizontal: 5
   },
   promoImage: {
     width: '100%',

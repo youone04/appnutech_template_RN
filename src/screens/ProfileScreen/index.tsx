@@ -1,5 +1,6 @@
 import AvatarComponent from "@components/atoms/AvatarComponent";
 import FieldWithIcon from "@components/atoms/FieldWithIcon";
+import { faAt, faPen, faUser } from "@fortawesome/free-solid-svg-icons";
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 const ProfileScreen: React.FC = () => {
@@ -15,17 +16,17 @@ const ProfileScreen: React.FC = () => {
                     <Text style={{ marginVertical: 10 }}>Email</Text>
                     <FieldWithIcon
                         placeholder="wallet@nutech.com"
-                        iconName="email" />
+                        iconName={faAt} />
 
                     <Text style={{ marginVertical: 10 }}>Nama Depan</Text>
                     <FieldWithIcon
-                        placeholder="wallet@nutech.com"
-                        iconName="email" />
+                        placeholder="Nama Depan"
+                        iconName={faUser} />
 
                     <Text style={{ marginVertical: 10 }}>Nama Belakang</Text>
                     <FieldWithIcon
-                        placeholder="wallet@nutech.com"
-                        iconName="email" />
+                        placeholder="Nama Belakang"
+                        iconName={faUser} />
 
                     <View style={{ alignItems: 'center' }}>
                         <TouchableOpacity style={styles.buttonEdit}>

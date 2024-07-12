@@ -1,10 +1,10 @@
 import React from 'react';
-import { View, TextInput, StyleSheet, ViewStyle, TextStyle, KeyboardType} from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
-
-type FieldProps =  {
+import { View, TextInput, StyleSheet, ViewStyle, TextStyle, KeyboardType } from 'react-native';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
+import { Text } from 'react-native-svg';
+type FieldProps = {
     placeholder?: string;
-    iconName : string;
+    iconName: any;
     styleTextInput?: TextStyle;
     styleContainer?: ViewStyle;
     styleIcon?: TextStyle;
@@ -12,20 +12,25 @@ type FieldProps =  {
     keyboardType?: KeyboardType;
     secureTextEntry?: boolean;
     onClick?: () => void;
-  } 
+}
 
 const FieldWithIcon: React.FC<FieldProps> = (data) => {
-    return(
-        <View style={[styles.container , data.styleContainer]}>
-        <Icon name={data.iconName} size={20} color="#aaa" style={[styles.icon]} />
-        <TextInput
-            style={[styles.input, data.styleTextInput]}
-            placeholder={data.placeholder}
-            placeholderTextColor="#aaa"
-            keyboardType={data.keyboardType}
-            secureTextEntry={data.secureTextEntry}
-        />
-    </View>
+    return (
+        <View style={[styles.container, data.styleContainer]}>
+            {
+                data.iconName ?
+                    <FontAwesomeIcon icon={data.iconName} style={styles.icon} /> :
+                    <Text></Text>
+
+            }
+            <TextInput
+                style={[styles.input, data.styleTextInput]}
+                placeholder={data.placeholder}
+                placeholderTextColor="#aaa"
+                keyboardType={data.keyboardType}
+                secureTextEntry={data.secureTextEntry}
+            />
+        </View>
     )
 }
 const styles = StyleSheet.create({
@@ -41,6 +46,7 @@ const styles = StyleSheet.create({
     },
     icon: {
         marginRight: 10,
+        color:'gray'
     },
     input: {
         flex: 1,

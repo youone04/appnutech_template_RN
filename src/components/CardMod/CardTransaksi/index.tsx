@@ -23,12 +23,13 @@ const CardTransaksi: React.FC = () => {
                     <Text style={{
                         marginBottom: 10,
                         color: 'green',
-                        fontSize: 25
+                        fontSize: 22,
+                        fontWeight:'500'
                     }}>+ Rp.10.000</Text>
                     <Text >Top Up Saldo</Text>
                 </View>
                 <View>
-                    <Text style={{ color: 'gray' }}>17 Agustus 2023 13:30 WIB</Text>
+                    <Text style={{ color: 'gray', fontSize:12 }}>17 Agustus 2023 13:30 WIB</Text>
                 </View>
             </View>
         </>

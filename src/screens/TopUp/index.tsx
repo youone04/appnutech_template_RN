@@ -1,4 +1,5 @@
 import FieldWithIcon from '@components/atoms/FieldWithIcon';
+import { faCalculator } from '@fortawesome/free-solid-svg-icons';
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
@@ -24,7 +25,7 @@ const TopUpScreen: React.FC<{ navigation: any }> = ({navigation}) => {
       <FieldWithIcon
       styleTextInput={{height: 40}}
       placeholder='Masukan nominal Top Up'
-      iconName='calculator'
+      iconName={faCalculator}
       />
 
       <View style={styles.buttonContainer}>

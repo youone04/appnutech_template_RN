@@ -1,6 +1,7 @@
 import FieldWithIcon from '@components/atoms/FieldWithIcon';
+import { faAt, faLock, faUser } from '@fortawesome/free-solid-svg-icons';
 import React from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 
 const RegistrasiScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     return (
@@ -14,27 +15,27 @@ const RegistrasiScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
 
             <FieldWithIcon
                 placeholder="masukan email anda"
-                iconName="leftcircle"
+                iconName={faAt}
             />
 
             <FieldWithIcon
                 placeholder="nama depan"
-                iconName="leftcircle"
+                iconName={faUser}
             />
 
             <FieldWithIcon
                 placeholder="nama belakang"
-                iconName="leftcircle"
+                iconName={faUser}
             />
 
             <FieldWithIcon
                 placeholder="buat password"
-                iconName="leftcircle"
+                iconName={faLock}
                 secureTextEntry={true}
             />
             <FieldWithIcon
                 placeholder="konfirmasi password"
-                iconName="leftcircle"
+                iconName={faLock}
                 secureTextEntry={true}
             />
             <TouchableOpacity style={styles.button}>

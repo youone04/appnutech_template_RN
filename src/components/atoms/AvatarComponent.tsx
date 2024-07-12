@@ -1,25 +1,27 @@
 import React from 'react';
 import { View, Image, StyleSheet, TouchableOpacity, Text } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
+import { faPen } from '@fortawesome/free-solid-svg-icons';
 
 const AvatarComponent: React.FC = () => {
   return (
     <View style={styles.container}>
       <View style={styles.avatarContainer}>
-        <Image 
-          source={{ 
-            uri: 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png' }} // Replace with your avatar image URL
+        <Image
+          source={{
+            uri: 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png'
+          }} // Replace with your avatar image URL
           style={styles.avatar}
         />
         <TouchableOpacity style={styles.editIconContainer}>
-          <Icon name="pencil" size={18} color="#000" />
+          <FontAwesomeIcon icon={faPen} />
         </TouchableOpacity>
       </View>
       <Text style={{
-        textAlign:'center', 
-        fontWeight:'bold',
+        textAlign: 'center',
+        fontWeight: 'bold',
         fontSize: 25
-        }}>Kristanto Wibowo</Text>
+      }}>Kristanto Wibowo</Text>
     </View>
   );
 };
@@ -44,9 +46,18 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 10,
     right: 10,
-    backgroundColor: 'red',
+    backgroundColor: 'white',
     borderRadius: 15,
     padding: 8,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.23,
+    shadowRadius: 2.62,
+
+    elevation: 4,
   },
 });
 

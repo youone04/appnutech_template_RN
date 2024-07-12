@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 
 const TransactionScreen: React.FC = () => {
-    const [balance, setBalance] = useState<number>(0);
+    const [balance, setBalance] = useState<number>(10000);
     const [topUpAmount, setTopUpAmount] = useState<string>('');
 
     const handleTopUp = (amount: number) => {
@@ -14,7 +14,12 @@ const TransactionScreen: React.FC = () => {
         <View style={styles.container}>
             <View style={{ backgroundColor: '#e74c3c', borderRadius: 10, padding: 18 }}>
                 <Text style={styles.balanceText}>Saldo anda</Text>
-                <Text style={styles.balanceAmount}>Rp {balance}</Text>
+                <Text style={styles.balanceAmount}> {new Intl.NumberFormat('id-ID', {
+                    style: 'currency',
+                    currency: 'IDR',
+                    minimumFractionDigits: 0,
+                    maximumFractionDigits: 0,
+                }).format(balance)}</Text>
             </View>
             <View style={{ marginVertical: 25 }}>
                 <Text style={styles.promptText}>Transaksi</Text>

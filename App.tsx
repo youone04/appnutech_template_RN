@@ -7,12 +7,13 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoginScreen from '@screens/LoginScreen';
 import HomeScreen from '@screens/HomeScreen';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 import RegistrasiScreen from '@screens/RegistrasiScreen';
 import TopUpScreen from '@screens/TopUp';
 import PembayaranScreen from '@screens/PembayaranScreen';
 import TransactionScreen from '@screens/TransactionScreen';
 import ProfileScreen from '@screens/ProfileScreen';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
+import { faHome, faSackDollar, faCreditCard, faUser } from '@fortawesome/free-solid-svg-icons';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -20,16 +21,18 @@ const Stack = createNativeStackNavigator();
 const AppNavigator = () => (
   <Tab.Navigator
     screenOptions={({ route }) => ({
-      tabBarIcon: ({ color, size }) => {
-        let iconName;
+      tabBarIcon: ({color, size}) => {
+        let iconName:any;
         if (route.name === 'Home') {
-          iconName = 'home';
+          iconName = faHome;
         } else if (route.name === 'TopUp') {
-          iconName = 'cash';
-        } else {
-          iconName = 'cash'
+          iconName = faSackDollar;
+        } else if(route.name === 'Trasnsaction'){
+          iconName = faCreditCard
+        }else {
+          iconName = faUser
         }
-        return <Icon name={iconName as any} size={size} color={color} />;
+        return <FontAwesomeIcon icon={iconName}/>;
       },
     })}
   >

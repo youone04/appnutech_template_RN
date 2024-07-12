@@ -1,7 +1,7 @@
 import FieldWithIcon from '@components/atoms/FieldWithIcon';
+import { faAt, faLock } from '@fortawesome/free-solid-svg-icons';
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
-
 const LoginScreen: React.FC <{navigation: any}>= ({navigation}) => {
     return (
         <View style={styles.container}>
@@ -14,11 +14,11 @@ const LoginScreen: React.FC <{navigation: any}>= ({navigation}) => {
 
             <FieldWithIcon
                 placeholder="masukan email anda"
-                iconName="leftcircle"
+                iconName={faAt}
             />
             <FieldWithIcon
                 placeholder="masukan pasword anda"
-                iconName="leftcircle"
+                iconName={faLock}
                 keyboardType='email-address'
                 secureTextEntry={true}
             />
