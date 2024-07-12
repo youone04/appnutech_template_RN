@@ -1,9 +1,110 @@
+import { View, Text, TouchableOpacity, StyleSheet, Image, ActivityIndicator, Alert } from 'react-native';
+import React, { useState } from 'react';
+import { faAt, faL, faLock, faUser } from '@fortawesome/free-solid-svg-icons';
+import { lisApi } from 'helper/api/listApi';
 import FieldWithIcon from '@components/atoms/FieldWithIcon';
-import { faAt, faLock, faUser } from '@fortawesome/free-solid-svg-icons';
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import axios from 'axios';
+
+interface DataRegistrasi {
+    email: string;
+    namaDepan: string;
+    namaBelakang: string;
+    password: string;
+    konfirmasiPassword: string;
+}
+
+interface DataNotif {
+    notif: boolean
+}
 
 const RegistrasiScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
+    const [dataRegistrasi, setDataRegistrasi] = useState<DataRegistrasi>({
+        email: "",
+        namaDepan: "",
+        namaBelakang: "",
+        password: "",
+        konfirmasiPassword: "",
+    });
+    const [notif, setNotif] = useState<DataNotif>({ notif: false });
+    const [loading, setLoading] = useState<boolean>(false);
+    const [error, setError] = useState<object>({});
+
+    const handleInputChange = (field: keyof DataRegistrasi, text: string) => {
+        setDataRegistrasi(prevData => ({
+            ...prevData,
+            [field]: text
+        }));
+    };
+
+    const validateForm = () => {
+        const invalidFields: (keyof DataRegistrasi)[] = [];
+        Object.keys(dataRegistrasi).forEach((item) => {
+            const key = item as keyof DataRegistrasi;
+            if (!dataRegistrasi[key]) {
+                invalidFields.push(key);
+            }
+        });
+        return invalidFields;
+    };
+
+    const submit = () => {
+        const invalidFields = validateForm();
+        if (invalidFields.length > 0) {
+            setNotif({ notif: true });
+        } else if (dataRegistrasi.password !== dataRegistrasi.konfirmasiPassword) {
+            return Alert.alert("Password tidak cocok dengan konfirmasi password")
+        }else {
+            setNotif({ notif: false });
+            const payload: object = {
+                email: dataRegistrasi.email,
+                first_name: dataRegistrasi.namaDepan,
+                last_name: dataRegistrasi.namaBelakang,
+                password: dataRegistrasi.password
+            };
+
+            postData(payload);
+            // Handle form submission
+        }
+
+    }
+
+    const postData = async (payload: object) => {
+        try {
+            setLoading(true);
+            const response = await fetch(`https://take-home-test-api.nutech-integrasi.app/registration`, {
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                method: 'POST',
+                body: JSON.stringify(payload)
+            });
+
+            const hasilResponse = await response.json();
+            if (hasilResponse.status !== 200) {
+                Alert.alert(hasilResponse.message)
+                setDataRegistrasi({
+                    email: "",
+                    namaDepan: "",
+                    namaBelakang: "",
+                    password: "",
+                    konfirmasiPassword: "",
+                });
+            }
+            setLoading(false);
+
+        } catch (e) {
+            setLoading(false);
+            setDataRegistrasi({
+                email: "",
+                namaDepan: "",
+                namaBelakang: "",
+                password: "",
+                konfirmasiPassword: "",
+            })
+
+        }
+    }
+
     return (
         <View style={styles.container}>
             <View style={styles.banner}>
@@ -16,31 +117,50 @@ const RegistrasiScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
             <FieldWithIcon
                 placeholder="masukan email anda"
                 iconName={faAt}
+                keyboardType='email-address'
+                value={dataRegistrasi.email}
+                onChange={(text: string) => handleInputChange('email', text)}
             />
 
             <FieldWithIcon
                 placeholder="nama depan"
                 iconName={faUser}
+                value={dataRegistrasi.namaDepan}
+                onChange={(text: string) => handleInputChange('namaDepan', text)}
+
             />
 
             <FieldWithIcon
                 placeholder="nama belakang"
                 iconName={faUser}
+                value={dataRegistrasi.namaBelakang}
+                onChange={(text: string) => handleInputChange('namaBelakang', text)}
             />
 
             <FieldWithIcon
                 placeholder="buat password"
                 iconName={faLock}
+                value={dataRegistrasi.password}
                 secureTextEntry={true}
+                onChange={(text: string) => handleInputChange('password', text)}
             />
             <FieldWithIcon
                 placeholder="konfirmasi password"
+                value={dataRegistrasi.konfirmasiPassword}
                 iconName={faLock}
                 secureTextEntry={true}
+                onChange={(text: string) => handleInputChange('konfirmasiPassword', text)}
             />
-            <TouchableOpacity style={styles.button}>
-                <Text style={styles.buttonText}>Registasi</Text>
-            </TouchableOpacity>
+            <View style={{ width: '100%' }}>
+                {notif.notif ? <Text style={{ textAlign: 'center', color: 'red', margin: 3 }}>Semua field harus terisi</Text> : ""}
+                <TouchableOpacity disabled={loading} onPress={submit} style={styles.button}>
+                    {
+                        loading ?
+                            <ActivityIndicator /> :
+                            <Text style={styles.buttonText}>Registasi</Text>
+                    }
+                </TouchableOpacity>
+            </View>
 
             <Text style={styles.registerText}>
                 sudah punya akun? <Text onPress={() => navigation.navigate('Login')} style={styles.registerLink}>login di sini</Text>

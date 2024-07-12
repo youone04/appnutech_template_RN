@@ -13,7 +13,7 @@ import PembayaranScreen from '@screens/PembayaranScreen';
 import TransactionScreen from '@screens/TransactionScreen';
 import ProfileScreen from '@screens/ProfileScreen';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
-import { faHome, faSackDollar, faCreditCard, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faHome, faSackDollar, faCreditCard, faUser, faL } from '@fortawesome/free-solid-svg-icons';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -44,7 +44,7 @@ const AppNavigator = () => (
 );
 
 const RootNavigator = () => {
-  const isLoggedIn: boolean = true;
+  const isLoggedIn: boolean = false;
 
   return (
     <NavigationContainer>

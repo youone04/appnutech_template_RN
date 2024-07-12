@@ -4,14 +4,15 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { Text } from 'react-native-svg';
 type FieldProps = {
     placeholder?: string;
-    iconName: any;
+    iconName?: any;
     styleTextInput?: TextStyle;
     styleContainer?: ViewStyle;
     styleIcon?: TextStyle;
     count?: number;
     keyboardType?: KeyboardType;
     secureTextEntry?: boolean;
-    onClick?: () => void;
+    onChange?:any;
+    value?: string
 }
 
 const FieldWithIcon: React.FC<FieldProps> = (data) => {
@@ -29,6 +30,8 @@ const FieldWithIcon: React.FC<FieldProps> = (data) => {
                 placeholderTextColor="#aaa"
                 keyboardType={data.keyboardType}
                 secureTextEntry={data.secureTextEntry}
+                onChangeText={data.onChange}
+                value={data.value}
             />
         </View>
     )
