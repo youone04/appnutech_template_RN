@@ -1,7 +1,7 @@
 
 import { enableScreens } from 'react-native-screens';
 enableScreens(false);
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -14,25 +14,27 @@ import TransactionScreen from '@screens/TransactionScreen';
 import ProfileScreen from '@screens/ProfileScreen';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faHome, faSackDollar, faCreditCard, faUser, faL } from '@fortawesome/free-solid-svg-icons';
-
+import { AuthProvider, useAuth } from '@helper/AuthContext/AuthContext';
+import { getData } from '@helper/LocalStorage';
+import { ActivityIndicator, View, StyleSheet } from 'react-native';
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
 const AppNavigator = () => (
   <Tab.Navigator
     screenOptions={({ route }) => ({
-      tabBarIcon: ({color, size}) => {
-        let iconName:any;
+      tabBarIcon: ({ color, size }) => {
+        let iconName: any;
         if (route.name === 'Home') {
           iconName = faHome;
         } else if (route.name === 'TopUp') {
           iconName = faSackDollar;
-        } else if(route.name === 'Trasnsaction'){
+        } else if (route.name === 'Trasnsaction') {
           iconName = faCreditCard
-        }else {
+        } else {
           iconName = faUser
         }
-        return <FontAwesomeIcon icon={iconName}/>;
+        return <FontAwesomeIcon icon={iconName} />;
       },
     })}
   >
@@ -43,8 +45,31 @@ const AppNavigator = () => (
   </Tab.Navigator>
 );
 
-const RootNavigator = () => {
-  const isLoggedIn: boolean = false;
+const RootNavigator: React.FC = () => {
+  const { isLoggedIn, login } = useAuth();
+  const [loading, seLoading] = useState<boolean>(false);
+  useEffect(() => {
+    const hasil = async () => {
+      seLoading(true);
+      const token = await getData();
+      if (token) {
+        login()
+        seLoading(false);
+
+      }
+      seLoading(false);
+    }
+    hasil();
+
+  }, [isLoggedIn]);
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
+  }
 
   return (
     <NavigationContainer>
@@ -70,13 +95,19 @@ const RootNavigator = () => {
 };
 const App: React.FC = () => {
   return (
-    <RootNavigator />
+    <AuthProvider>
+      <RootNavigator />
+    </AuthProvider>
   );
 }
 //penggunaan auth helper
-{/* <AuthProvider>
-      <RootNavigator />
-    </AuthProvider> */}
 
+const styles = StyleSheet.create({
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});
 
 export default App;

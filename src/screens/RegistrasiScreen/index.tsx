@@ -1,9 +1,7 @@
 import { View, Text, TouchableOpacity, StyleSheet, Image, ActivityIndicator, Alert } from 'react-native';
 import React, { useState } from 'react';
-import { faAt, faL, faLock, faUser } from '@fortawesome/free-solid-svg-icons';
-import { lisApi } from 'helper/api/listApi';
+import { faAt, faLock, faUser } from '@fortawesome/free-solid-svg-icons';
 import FieldWithIcon from '@components/atoms/FieldWithIcon';
-import axios from 'axios';
 
 interface DataRegistrasi {
     email: string;
@@ -27,7 +25,6 @@ const RegistrasiScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     });
     const [notif, setNotif] = useState<DataNotif>({ notif: false });
     const [loading, setLoading] = useState<boolean>(false);
-    const [error, setError] = useState<object>({});
 
     const handleInputChange = (field: keyof DataRegistrasi, text: string) => {
         setDataRegistrasi(prevData => ({
@@ -53,7 +50,7 @@ const RegistrasiScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
             setNotif({ notif: true });
         } else if (dataRegistrasi.password !== dataRegistrasi.konfirmasiPassword) {
             return Alert.alert("Password tidak cocok dengan konfirmasi password")
-        }else {
+        } else {
             setNotif({ notif: false });
             const payload: object = {
                 email: dataRegistrasi.email,
@@ -61,9 +58,7 @@ const RegistrasiScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
                 last_name: dataRegistrasi.namaBelakang,
                 password: dataRegistrasi.password
             };
-
             postData(payload);
-            // Handle form submission
         }
 
     }

@@ -1,4 +1,5 @@
-import React, { createContext, useState, useContext, Component } from 'react';
+import { getData } from '@helper/LocalStorage';
+import React, { createContext, useState, useContext, useEffect } from 'react';
 
 type AuthContextType = {
   isLoggedIn: boolean;
@@ -13,7 +14,7 @@ export const AuthProvider: React.FC<{ children: any }> = ({ children }) => {
 
   const login = () => setIsLoggedIn(true);
   const logout = () => setIsLoggedIn(false);
-
+  
   return (
     <AuthContext.Provider value={{ isLoggedIn, login, logout }}>
       {children}

@@ -1,8 +1,74 @@
 import FieldWithIcon from '@components/atoms/FieldWithIcon';
 import { faAt, faLock } from '@fortawesome/free-solid-svg-icons';
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
-const LoginScreen: React.FC <{navigation: any}>= ({navigation}) => {
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, Image, Alert, ActivityIndicator } from 'react-native';
+import { useAuth } from '@helper/AuthContext/AuthContext';
+import { _storeData } from '@helper/LocalStorage';
+
+interface DataLogin {
+    email: string;
+    password: string;
+}
+const LoginScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
+    const { login } = useAuth();
+    const [dataLogin, setDatalogin] = useState<DataLogin>({
+        email: '',
+        password: ''
+    });
+    const [loading, setLoading] = useState<boolean>(false);
+
+    const handleInputChange = (field: keyof DataLogin, text: string) => {
+        setDatalogin(prevData => ({
+            ...prevData,
+            [field]: text
+        }));
+    };
+
+
+    const handleLogin = () => {
+        const payload: object = {
+            email: dataLogin.email,
+            password: dataLogin.password
+        };
+        postData(payload)
+    };
+
+    const postData = async (payload: object) => {
+        try {
+            setLoading(true);
+            const response = await fetch(`https://take-home-test-api.nutech-integrasi.app/login`, {
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                method: 'POST',
+                body: JSON.stringify(payload)
+            });
+
+            const hasilResponse = await response.json();
+            if (hasilResponse.status !== 0) {
+                setLoading(false);
+                setDatalogin({
+                    email: "",
+                    password: "",
+                });
+                return  Alert.alert(hasilResponse.message);
+            }
+            Alert.alert(hasilResponse.message)
+            // hasilResponse.data.token
+            _storeData(hasilResponse.data.token);
+            login();
+            setLoading(false);
+
+        } catch (e) {
+            setLoading(false);
+            setDatalogin({
+                email: "",
+                password: "",
+            })
+
+        }
+    }
+
     return (
         <View style={styles.container}>
             <View style={styles.banner}>
@@ -15,15 +81,22 @@ const LoginScreen: React.FC <{navigation: any}>= ({navigation}) => {
             <FieldWithIcon
                 placeholder="masukan email anda"
                 iconName={faAt}
+                onChange={(text: string) => handleInputChange('email', text)}
+                value={dataLogin.email}
             />
             <FieldWithIcon
                 placeholder="masukan pasword anda"
                 iconName={faLock}
-                keyboardType='email-address'
                 secureTextEntry={true}
+                onChange={(text: string) => handleInputChange('password', text)}
+                value={dataLogin.password}
             />
-            <TouchableOpacity style={styles.button}>
-                <Text style={styles.buttonText}>Masuk</Text>
+            <TouchableOpacity disabled={loading} onPress={handleLogin} style={styles.button}>
+                {
+                    loading ?
+                        <ActivityIndicator /> :
+                        <Text style={styles.buttonText}>Masuk</Text>
+                }
             </TouchableOpacity>
 
             <Text style={styles.registerText}>
