@@ -1,29 +1,17 @@
-import { getDataFetch } from '@helper/api/Api';
+import { getDataFetchArray, getDataFetchObj } from '@helper/api/Api';
 import React, { useEffect, useState } from 'react';
 import {
   View, Text, Image, StyleSheet, ScrollView,
   Dimensions,
-  TouchableOpacity, ImageSourcePropType
+  TouchableOpacity
 } from 'react-native';
-
+import { DataBanner, DataService, DataTransaction } from "config/Type/type";
 const { width: screenWidth } = Dimensions.get('window');
-
-interface DataBanner {
-  banner_name: string;
-  banner_image: string;
-  description: string
-}
-
-interface DataService {
-  service_code: string;
-  service_name: string;
-  service_icon: string,
-  service_tariff: number
-}
 
 const HomeScreen: React.FC = () => {
   const [dataBanner, setBanner] = useState<DataBanner[] | null>(null);
-  const [dataService, setDataService] = useState<DataService[] | null>(null)
+  const [dataService, setDataService] = useState<DataService[] | null>(null);
+  const [dataTransaction, setDataTransaction] = useState<DataTransaction | null>(null);
 
   useEffect(() => {
     fetchData();
@@ -31,8 +19,11 @@ const HomeScreen: React.FC = () => {
 
   const fetchData = async () => {
     await Promise.all(
-      [getDataFetch(setBanner, "banner"),
-      getDataFetch(setDataService, "services")])
+      [
+      getDataFetchArray(setBanner, "banner"),
+      getDataFetchArray(setDataService, "services"),
+      getDataFetchObj(setDataTransaction, "balance")
+      ])
   };
 
   return (
@@ -56,7 +47,15 @@ const HomeScreen: React.FC = () => {
         {/* Balance Card */}
         <View style={styles.balanceCard}>
           <Text style={styles.balanceText}>Saldo anda</Text>
-          <Text style={styles.balanceAmount}>Rp ********</Text>
+          <Text style={styles.balanceAmount}>
+            {new Intl.NumberFormat('id-ID', {
+              style: 'currency',
+              currency: 'IDR',
+              minimumFractionDigits: 0,
+              maximumFractionDigits: 0,
+            }).format(dataTransaction?.balance || 0)
+            }
+          </Text>
           <TouchableOpacity style={styles.balanceButton}>
             <Text style={styles.balanceButtonText}>Lihat Saldo</Text>
           </TouchableOpacity>
@@ -64,17 +63,10 @@ const HomeScreen: React.FC = () => {
 
         {/* Services Grid */}
         <View style={styles.servicesGrid}>
-          {[
-            { name: 'PBB', icon: require('@assets/logos/PBB.png') },
-            { name: 'Listrik', icon: require('@assets/logos/Listrik.png') },
-            { name: 'Pulsa', icon: require('@assets/logos/Pulsa.png') },
-            { name: 'PDAM', icon: require('@assets/logos/PDAM.png') },
-            { name: 'PGN', icon: require('@assets/logos/PGN.png') },
-            { name: 'Lainnya', icon: require('@assets/logos/Televisi.png') },
-          ].map((service, index) => (
+          {dataService?.map((service, index) => (
             <View key={index} style={styles.serviceItem}>
-              <Image source={service.icon as ImageSourcePropType} style={styles.serviceIcon} />
-              <Text style={styles.serviceName}>{service.name}</Text>
+              <Image source={{ uri: service.service_icon }} style={styles.serviceIcon} />
+              <Text style={styles.serviceName}>{service.service_name}</Text>
             </View>
           ))}
         </View>

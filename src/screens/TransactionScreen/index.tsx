@@ -1,14 +1,38 @@
 import CardTransaksi from '@components/CardMod/CardTransaksi';
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, FlatList, ActivityIndicator } from 'react-native';
+import { DataTransaction, DataRecord } from "config/Type/type";
+import { getDataFetchObj, getDataFetchObjWithPagination } from '@helper/api/Api';
 
 const TransactionScreen: React.FC = () => {
-    const [balance, setBalance] = useState<number>(10000);
-    const [topUpAmount, setTopUpAmount] = useState<string>('');
+    const [balance, setBalance] = useState<DataTransaction | null>(null);
+    const [DataHistoriTransaction, setHistoruTransaction] = useState<DataRecord[]>([])
+    const [offset , setOffset] = useState<number>(0);
+    const [loading, setLoading] = useState<boolean>(false);
 
-    const handleTopUp = (amount: number) => {
-        setBalance(balance + amount);
-    };
+
+    useEffect(() => {
+        fetchData();
+
+    }, []);
+
+    const fetchData = async () => {
+
+        await Promise.all([
+            getDataFetchObj(setBalance, "balance"),
+            getDataFetchObjWithPagination(setHistoruTransaction, `transaction/history?offset=${offset}&limit=${5}`, offset)
+        ]);
+    }
+
+    const loadMore = () => {
+        setLoading(true);
+       setTimeout(async() => {
+        setOffset((prev) => prev + 1);
+        await getDataFetchObjWithPagination(setHistoruTransaction, `transaction/history?offset=${offset+1}&limit=${5}`, offset+1);
+        setLoading(false);
+       },3000)
+
+    }
 
     return (
         <View style={styles.container}>
@@ -19,18 +43,22 @@ const TransactionScreen: React.FC = () => {
                     currency: 'IDR',
                     minimumFractionDigits: 0,
                     maximumFractionDigits: 0,
-                }).format(balance)}</Text>
+                }).format(balance?.balance || 0)}</Text>
             </View>
             <View style={{ marginVertical: 25 }}>
                 <Text style={styles.promptText}>Transaksi</Text>
             </View>
-            <CardTransaksi />
-            <CardTransaksi />
-            <CardTransaksi />
-            <CardTransaksi />
+            <FlatList
+                data={DataHistoriTransaction}
+                keyExtractor={(item) => `${item?.invoice_number}`}
+                renderItem={CardTransaksi}
+                onEndReached={loadMore}
+                onEndReachedThreshold={0.5}
+                ListFooterComponent={loading ? <ActivityIndicator size="large" color="#0000ff" /> : <Text/>}
+            />
             <TouchableOpacity
+            onPress={loadMore}
                 style={styles.pembayaranButton}
-                onPress={() => handleTopUp(Number(topUpAmount))}
             >
                 <Text style={styles.pembayaranButtonText}>Show more</Text>
             </TouchableOpacity>
