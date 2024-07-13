@@ -9,6 +9,8 @@ import {
 } from 'react-native';
 import { DataBanner, DataService, DataTransaction, DataProfile } from "config/Type/type";
 import { faEye } from '@fortawesome/free-solid-svg-icons';
+import HeaderCcmponent from '@components/atoms/HeaderComponent';
+import WelcomeMessageComponent from '@components/atoms/WelcomeMessageComponent';
 const { width: screenWidth } = Dimensions.get('window');
 
 const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
@@ -42,29 +44,22 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         getDataFetchArray(setDataService, "services"),
       ])
   };
-  
+
   return (
     <View style={styles.container}>
       <ScrollView>
         {/* Header */}
-        <View style={styles.header}>
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <Image source={require('@assets/logos/Logo.png')} style={styles.logo} />
-            <Text style={{ marginLeft: 8 }}>SIMS PPOB</Text>
-          </View>
-          <Image source={{ uri: dataProfile?.profile_image }} style={styles.userIcon} />
-        </View>
-
+        <HeaderCcmponent
+          profile_image={dataProfile?.profile_image}
+        />
         {/* Welcome Message */}
-        <View style={styles.welcome}>
-          <Text style={styles.welcomeText}>Selamat datang,</Text>
-          <Text style={styles.userName}>{dataProfile?.first_name}</Text>
-        </View>
+        <WelcomeMessageComponent
+          first_name={dataProfile?.first_name}
+        />
 
         {/* Balance Card */}
         <View style={styles.balanceCard}>
           <Text style={styles.balanceText}>Saldo anda</Text>
-
           {
             isValueVisible ? <Text style={styles.balanceAmount}>
               {new Intl.NumberFormat('id-ID', {
@@ -85,9 +80,7 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
                   })
                 }
               </View>
-
           }
-
           <TouchableOpacity onPress={() => setVisible(!isValueVisible)} style={styles.balanceButton}>
             <Text style={styles.balanceButtonText}>Lihat Saldo</Text>
             <FontAwesomeIcon icon={faEye} style={styles.balanceButtonText} />
@@ -105,11 +98,11 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
             </TouchableOpacity>
           ))}
           <TouchableOpacity onPress={() => navigation.navigate('Pembayaran')}>
-              <View style={styles.serviceItem}>
-                <Image source={{ uri: require('@assets/logos/Zakat.png') }} style={styles.serviceIcon} />
-                <Text style={styles.serviceName}>Lainnya</Text>
-              </View>
-            </TouchableOpacity>
+            <View style={styles.serviceItem}>
+              <Image source={{ uri: require('@assets/logos/Zakat.png') }} style={styles.serviceIcon} />
+              <Text style={styles.serviceName}>Lainnya</Text>
+            </View>
+          </TouchableOpacity>
         </View>
 
         {/* Promotional Banners */}
@@ -125,7 +118,6 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
             </View>
           ))}
         </ScrollView>
-
       </ScrollView>
     </View>
   );
@@ -144,33 +136,6 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 16,
-    backgroundColor: '#ffffff',
-  },
-  logo: {
-    width: 25,
-    height: 25,
-  },
-  userIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-  },
-  welcome: {
-    padding: 16,
-  },
-  welcomeText: {
-    fontSize: 16,
-    color: '#888888',
-  },
-  userName: {
-    fontSize: 24,
-    fontWeight: 'bold',
   },
   balanceCard: {
     backgroundColor: '#ff5252',
@@ -198,14 +163,14 @@ const styles = StyleSheet.create({
   balanceButtonText: {
     color: '#ffffff',
     marginHorizontal: 3,
-    alignSelf:'center'
+    alignSelf: 'center'
   },
   servicesGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'flex-start',
     padding: 18,
-    alignContent:'center'
+    alignContent: 'center'
   },
   serviceItem: {
     width: 73,
