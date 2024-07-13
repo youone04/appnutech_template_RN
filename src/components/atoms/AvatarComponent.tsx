@@ -6,7 +6,9 @@ import {DataProfile} from "config/Type/type";
 
 const AvatarComponent: React.FC<DataProfile> = (item) => {
   let cekPhoto = null;
-  if(item?.profile_image&&item.profile_image?.split('/').pop()!=="null"){
+  if(item.cekPhoto){
+    cekPhoto = item.cekPhoto
+  }else if(item?.profile_image&&item.profile_image?.split('/').pop()!=="null"){
     cekPhoto = item.profile_image;
   }else{
     cekPhoto = "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/680px-Default_pfp.svg.png"
@@ -21,7 +23,7 @@ const AvatarComponent: React.FC<DataProfile> = (item) => {
           }}
           style={styles.avatar}
         />
-        <TouchableOpacity style={styles.editIconContainer}>
+        <TouchableOpacity onPress={() => item.handleChoosePhoto()} style={styles.editIconContainer}>
           <FontAwesomeIcon icon={faPen} />
         </TouchableOpacity>
       </View>

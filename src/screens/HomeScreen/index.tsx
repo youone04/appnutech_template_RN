@@ -1,21 +1,22 @@
 import { getDataFetchArray, getDataFetchObj } from '@helper/api/Api';
 import React, { useEffect, useState } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
-
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import {
   View, Text, Image, StyleSheet, ScrollView,
   Dimensions,
   TouchableOpacity
 } from 'react-native';
-import { DataBanner, DataService, DataTransaction } from "config/Type/type";
-// import { useAuth } from '@helper/AuthContext/AuthContext';
+import { DataBanner, DataService, DataTransaction, DataProfile } from "config/Type/type";
+import { faEye } from '@fortawesome/free-solid-svg-icons';
 const { width: screenWidth } = Dimensions.get('window');
 
-const HomeScreen: React.FC = () => {
+const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   const [dataBanner, setBanner] = useState<DataBanner[] | null>(null);
   const [dataService, setDataService] = useState<DataService[] | null>(null);
   const [dataTransaction, setDataTransaction] = useState<DataTransaction | null>(null);
-  // const { logout } = useAuth();
+  const [dataProfile, setDataProfile] = useState<DataProfile | null>(null);
+  const [isValueVisible, setVisible] = useState<boolean>(true);
 
   useEffect(() => {
     fetchData();
@@ -24,11 +25,12 @@ const HomeScreen: React.FC = () => {
   useFocusEffect(
     React.useCallback(() => {
       const updateEndpoint = async () => {
-        await getDataFetchObj(setDataTransaction, "balance")
+        await getDataFetchObj(setDataTransaction, "balance");
+        await getDataFetchObj(setDataProfile, "profile");
       };
       updateEndpoint();
       return () => {
-        
+
       };
     }, [])
   );
@@ -40,8 +42,7 @@ const HomeScreen: React.FC = () => {
         getDataFetchArray(setDataService, "services"),
       ])
   };
-  // logout()
-  // 
+  
   return (
     <View style={styles.container}>
       <ScrollView>
@@ -51,40 +52,64 @@ const HomeScreen: React.FC = () => {
             <Image source={require('@assets/logos/Logo.png')} style={styles.logo} />
             <Text style={{ marginLeft: 8 }}>SIMS PPOB</Text>
           </View>
-          <Image source={{ uri: 'https://randomuser.me/api/portraits/men/1.jpg' }} style={styles.userIcon} />
+          <Image source={{ uri: dataProfile?.profile_image }} style={styles.userIcon} />
         </View>
 
         {/* Welcome Message */}
         <View style={styles.welcome}>
           <Text style={styles.welcomeText}>Selamat datang,</Text>
-          <Text style={styles.userName}>Kristanto Wibowo</Text>
+          <Text style={styles.userName}>{dataProfile?.first_name}</Text>
         </View>
 
         {/* Balance Card */}
         <View style={styles.balanceCard}>
           <Text style={styles.balanceText}>Saldo anda</Text>
-          <Text style={styles.balanceAmount}>
-            {new Intl.NumberFormat('id-ID', {
-              style: 'currency',
-              currency: 'IDR',
-              minimumFractionDigits: 0,
-              maximumFractionDigits: 0,
-            }).format(dataTransaction?.balance || 0)
-            }
-          </Text>
-          <TouchableOpacity style={styles.balanceButton}>
+
+          {
+            isValueVisible ? <Text style={styles.balanceAmount}>
+              {new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0,
+              }).format(dataTransaction?.balance || 0)
+              }
+            </Text> :
+              <View style={{ flexDirection: 'row', marginVertical: 20 }}>
+                {
+                  [1, 2, 3, 4, 5, 6, 7, 9, 10].map((_, i) => {
+                    return (
+                      <View key={i} style={styles.circle} />
+
+                    )
+                  })
+                }
+              </View>
+
+          }
+
+          <TouchableOpacity onPress={() => setVisible(!isValueVisible)} style={styles.balanceButton}>
             <Text style={styles.balanceButtonText}>Lihat Saldo</Text>
+            <FontAwesomeIcon icon={faEye} style={styles.balanceButtonText} />
           </TouchableOpacity>
         </View>
 
         {/* Services Grid */}
         <View style={styles.servicesGrid}>
-          {dataService?.map((service, index) => (
-            <View key={index} style={styles.serviceItem}>
-              <Image source={{ uri: service.service_icon }} style={styles.serviceIcon} />
-              <Text style={styles.serviceName}>{service.service_name}</Text>
-            </View>
+          {dataService?.slice(0, 9).map((service, index) => (
+            <TouchableOpacity onPress={() => navigation.navigate('Pembayaran', service)}>
+              <View key={index} style={styles.serviceItem}>
+                <Image source={{ uri: service.service_icon }} style={styles.serviceIcon} />
+                <Text style={styles.serviceName}>{service.service_name}</Text>
+              </View>
+            </TouchableOpacity>
           ))}
+          <TouchableOpacity onPress={() => navigation.navigate('Pembayaran')}>
+              <View style={styles.serviceItem}>
+                <Image source={{ uri: require('@assets/logos/Zakat.png') }} style={styles.serviceIcon} />
+                <Text style={styles.serviceName}>Lainnya</Text>
+              </View>
+            </TouchableOpacity>
         </View>
 
         {/* Promotional Banners */}
@@ -107,6 +132,16 @@ const HomeScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
+  circle: {
+    width: 11,
+    height: 11,
+    borderRadius: 25,
+    backgroundColor: 'white',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 4,
+    marginLeft: 5
+  },
   container: {
     flex: 1,
   },
@@ -157,18 +192,23 @@ const styles = StyleSheet.create({
   balanceButton: {
     borderRadius: 20,
     paddingVertical: 8,
+    flexDirection: 'row',
+    alignItems: 'center'
   },
   balanceButtonText: {
     color: '#ffffff',
+    marginHorizontal: 3,
+    alignSelf:'center'
   },
   servicesGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'flex-start',
-    padding: 16,
+    padding: 18,
+    alignContent:'center'
   },
   serviceItem: {
-    width: 70,
+    width: 73,
     alignItems: 'center',
     marginVertical: 10,
   },

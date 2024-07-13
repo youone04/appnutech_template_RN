@@ -1,42 +1,107 @@
 import FieldWithIcon from '@components/atoms/FieldWithIcon';
 import { faCalculator } from '@fortawesome/free-solid-svg-icons';
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image, Alert, ActivityIndicator } from 'react-native';
+import { getDataFetchObj } from '@helper/api/Api';
+import { formatMataUang } from '@helper/func';
+import { useRoute, RouteProp, useFocusEffect } from '@react-navigation/native';
+import { DataTransaction } from "config/Type/type";
+import { getData } from '@helper/LocalStorage';
 
-const PembayaranScreen: React.FC = () => {
-    const [balance, setBalance] = useState<number>(0);
-    const [topUpAmount, setTopUpAmount] = useState<string>('');
+// Define your route params type
+type RootStackParamList = {
+    Pembayaran: {
+        service_code: string,
+        service_name: string,
+        service_icon: string,
+        service_tariff: number
+    };
+};
 
-    const handleTopUp = (amount: number) => {
-        setBalance(balance + amount);
+type PembayaranScreenRouteProp = RouteProp<RootStackParamList, 'Pembayaran'>;
+const PembayaranScreen: React.FC<{navigation: any}> = ({navigation}) => {
+    const [balance, setBalance] = useState<DataTransaction | null>(null);
+    const route = useRoute<PembayaranScreenRouteProp>();
+    const [loading, setLoading] = useState<boolean>(false);
+    const { service_tariff, service_code, service_icon, service_name } = route.params;
+
+    useFocusEffect(
+        React.useCallback(() => {
+            const updateEndpoint = async () => {
+                await getDataFetchObj(setBalance, "balance")
+            };
+            updateEndpoint();
+            return () => {
+
+            };
+        }, [])
+    );
+
+    const handlePay = async () => {
+        try {
+            const token = await getData();
+            setLoading(true);
+            const response = await fetch(`https://take-home-test-api.nutech-integrasi.app/transaction`, {
+                headers: {
+                    "Content-Type": "application/json",
+                    'Authorization': `Bearer ${token}`
+                },
+                method: 'POST',
+                body: JSON.stringify({ service_code })
+            });
+            const hasilResponse = await response.json();
+            if (hasilResponse.status !== 0) {
+                setLoading(false);
+                return Alert.alert(hasilResponse.message);
+            }
+            Alert.alert(hasilResponse.message);
+            setLoading(false);
+            navigation.navigate('Home');
+        } catch (e) {
+            setLoading(false);
+
+        }
     };
 
     return (
         <View style={styles.container}>
             <View style={{ backgroundColor: '#e74c3c', borderRadius: 10, padding: 18 }}>
                 <Text style={styles.balanceText}>Saldo anda</Text>
-                <Text style={styles.balanceAmount}>Rp {balance}</Text>
+                <Text style={styles.balanceAmount}>{formatMataUang(balance?.balance)}</Text>
             </View>
 
             <View style={{ marginVertical: 40 }}>
                 <Text style={styles.promptText}>Pembayaran</Text>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <Image source={require('@assets/logos/Listrik.png')} style={styles.logo} />
-                    <Text style={{ fontSize: 16, fontWeight: 'bold', alignSelf: 'center' }}>Listrik Prabayar</Text>
+                    <Image source={{ uri: service_icon }} style={styles.logo} />
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', alignSelf: 'center' }}>{service_name}</Text>
                 </View>
             </View>
 
             <FieldWithIcon
                 styleTextInput={{ height: 40 }}
                 placeholder='Masukan nominal Top Up'
+                disabled={true}
+                value={new Intl.NumberFormat('id-ID', {
+                    style: 'currency',
+                    currency: 'IDR',
+                    minimumFractionDigits: 0,
+                    maximumFractionDigits: 0,
+                }).format(service_tariff || 0)}
                 iconName={faCalculator}
             />
 
             <TouchableOpacity
                 style={styles.pembayaranButton}
-                onPress={() => handleTopUp(Number(topUpAmount))}
+                onPress={() => handlePay()}
+                disabled={loading}
             >
-                <Text style={styles.pembayaranButtonText}>Bayar</Text>
+                {
+                    loading ?
+                        <ActivityIndicator /> :
+                        <Text style={styles.pembayaranButtonText}>Bayar</Text>
+
+                }
             </TouchableOpacity>
         </View>
     );
@@ -47,7 +112,7 @@ const styles = StyleSheet.create({
         width: 35,
         height: 35,
         marginRight: 8,
-        alignSelf:'center'
+        alignSelf: 'center'
     },
     container: {
         flex: 1,

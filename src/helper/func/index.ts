@@ -9,7 +9,7 @@ export const formatMataUang = (data: bigint) => {
 }
 
 
-export const formatNumber = (value: string) => {
+export const formatNumber = (value: any) => {
     return value.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 };
 

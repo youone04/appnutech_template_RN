@@ -29,7 +29,10 @@ export interface DataProfile {
   email?: string,
   first_name?: string,
   last_name?: string,
-  profile_image?: string
+  profile_image?: string,
+  uploadImage?: void,
+  cekPhoto?: string | null,
+  handleChoosePhoto?: any,
 }
 
 export interface FieldProfile {

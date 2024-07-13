@@ -48,7 +48,7 @@ const CardTransaksi = ({ item } : { item: DataRecord }) => {
                         }).format(item.total_amount || 0)
                             }</Text>
                 }
-                <Text >{item.transaction_type}</Text>
+                <Text >{item.description}</Text>
             </View>
             <View>
                 <Text style={{ color: 'gray', fontSize: 12 }}>{item.created_on}</Text>

@@ -7,7 +7,7 @@ import { _storeData, getData } from '@helper/LocalStorage';
 import { DataTransaction } from "config/Type/type";
 import { getDataFetchObj } from '@helper/api/Api';
 
-const TopUpScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
+const TopUpScreen: React.FC= () => {
   const [balance, setBalance] = useState<DataTransaction | null>(null);
   const [topUpAmount, setTopUpAmount] = useState<string>('0');
   const [loading, setLoading] = useState<boolean>(false);
