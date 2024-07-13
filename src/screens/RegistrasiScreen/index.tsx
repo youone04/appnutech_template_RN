@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { faAt, faLock, faUser } from '@fortawesome/free-solid-svg-icons';
 import FieldWithIcon from '@components/atoms/FieldWithIcon';
 import { DataRegistrasi } from "config/Type/type"
-import { validataForm } from '@helper/func';
+import { validataForm, validateEmail } from '@helper/func';
 interface DataNotif {
     notif: boolean
 }
@@ -31,7 +31,9 @@ const RegistrasiScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         if (invalidFields.length > 0) {
             setNotif({ notif: true });
         } else if (dataRegistrasi.password !== dataRegistrasi.konfirmasiPassword) {
-            return Alert.alert("Password tidak cocok dengan konfirmasi password")
+            return null;
+        } else if (!validateEmail(dataRegistrasi.email)) {
+            return null
         } else {
             setNotif({ notif: false });
             const payload: object = {
@@ -91,6 +93,7 @@ const RegistrasiScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
             <FieldWithIcon
                 id='email'
                 placeholder="masukan email anda"
+                isEmail={true}
                 iconName={faAt}
                 keyboardType='email-address'
                 value={dataRegistrasi.email}
@@ -123,6 +126,7 @@ const RegistrasiScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
             <FieldWithIcon
                 id='password'
                 placeholder="buat password"
+                isPassword={true}
                 iconName={faLock}
                 value={dataRegistrasi.password}
                 secureTextEntry={true}
@@ -135,10 +139,12 @@ const RegistrasiScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
                 placeholder="konfirmasi password"
                 value={dataRegistrasi.konfirmasiPassword}
                 iconName={faLock}
+                valuePassword={dataRegistrasi.password}
                 secureTextEntry={true}
                 onChange={(text: string) => handleInputChange('konfirmasiPassword', text)}
                 validateForm={valid}
                 isNull={notif.notif}
+                konfirmasiPW={true}
             />
             <View style={{ width: '100%', marginTop: 25 }}>
                 <TouchableOpacity disabled={loading} onPress={submit} style={styles.button}>

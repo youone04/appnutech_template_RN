@@ -1,8 +1,8 @@
 import React from 'react';
 import { View, TextInput, StyleSheet, ViewStyle, TextStyle, KeyboardType, Text, Dimensions } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import ShowNotifField from '@components/atoms/ShowNotifField';
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
-
 type FieldProps = {
     placeholder?: string;
     iconName?: any;
@@ -17,30 +17,32 @@ type FieldProps = {
     disabled?: boolean
     id?: string
     isNull?: boolean
-    validateForm?: any
+    validateForm?: any,
+    valuePassword?: any,
+    konfirmasiPW?: boolean,
+    isPassword?: boolean,
+    isEmail?: boolean,
 
 }
-
 const FieldWithIcon: React.FC<FieldProps> = (data) => {
     let dataNotValid = [];
     if (data?.validateForm) {
         dataNotValid = data?.validateForm;
     }
-    console.log(data.isNull)
     return (
         <View style={{ width: SCREEN_WIDTH - 40, marginBottom: 7 }}>
             <View style={
                 [styles.container,
                 data.styleContainer,
-                dataNotValid.includes(data.id) && data.isNull?
+                dataNotValid.includes(data.id) && data.isNull ?
                     { borderColor: 'red' } : {}
                 ]}>
                 {
                     data.iconName ?
                         <FontAwesomeIcon icon={data.iconName} style={[
-                            dataNotValid.includes(data.id) && data.isNull?
-                            styles.iconRed:
-                            styles.icon
+                            dataNotValid.includes(data.id) && data.isNull ?
+                                styles.iconRed :
+                                styles.icon
 
                         ]} /> :
                         <Text></Text>
@@ -59,17 +61,16 @@ const FieldWithIcon: React.FC<FieldProps> = (data) => {
                     id={data.id}
                 />
             </View>
-            {
-                dataNotValid.includes(data.id) && data.isNull ?
-                    <Text style={{
-                        color: 'red',
-                        right: 6,
-                        bottom: 0,
-                        position: 'absolute'
-                    }}>Field tidak boleh kosong</Text> : null
-
-            }
-
+            <ShowNotifField
+                dataNotValid={dataNotValid}
+                value={data.value}
+                id={data.id}
+                isNull={data.isNull}
+                valuePassword={data.valuePassword}
+                konfirmasiPW={data.konfirmasiPW}
+                isPassword={data.isPassword}
+                isEmail={data.isEmail}
+            />
         </View>
     )
 }
