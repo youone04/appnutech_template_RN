@@ -1,21 +1,48 @@
-import React from 'react';
-import { View, Text, Image, StyleSheet, ScrollView, 
+import { getDataFetch } from '@helper/api/Api';
+import React, { useEffect, useState } from 'react';
+import {
+  View, Text, Image, StyleSheet, ScrollView,
   Dimensions,
-  TouchableOpacity, ImageSourcePropType } from 'react-native';
+  TouchableOpacity, ImageSourcePropType
+} from 'react-native';
 
 const { width: screenWidth } = Dimensions.get('window');
 
-const HomeScreen : React.FC = () => {
+interface DataBanner {
+  banner_name: string;
+  banner_image: string;
+  description: string
+}
 
+interface DataService {
+  service_code: string;
+  service_name: string;
+  service_icon: string,
+  service_tariff: number
+}
+
+const HomeScreen: React.FC = () => {
+  const [dataBanner, setBanner] = useState<DataBanner[] | null>(null);
+  const [dataService, setDataService] = useState<DataService[] | null>(null)
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    await Promise.all(
+      [getDataFetch(setBanner, "banner"),
+      getDataFetch(setDataService, "services")])
+  };
 
   return (
     <View style={styles.container}>
       <ScrollView>
         {/* Header */}
         <View style={styles.header}>
-          <View style={{flexDirection: 'row', alignItems:'center'}}>
-          <Image source={require('@assets/logos/Logo.png')} style={styles.logo} />
-          <Text style={{marginLeft:8}}>SIMS PPOB</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Image source={require('@assets/logos/Logo.png')} style={styles.logo} />
+            <Text style={{ marginLeft: 8 }}>SIMS PPOB</Text>
           </View>
           <Image source={{ uri: 'https://randomuser.me/api/portraits/men/1.jpg' }} style={styles.userIcon} />
         </View>
@@ -53,18 +80,15 @@ const HomeScreen : React.FC = () => {
         </View>
 
         {/* Promotional Banners */}
-        <Text style={{paddingLeft: 25, fontWeight:'bold'}}>Tentukan Promo Menarik</Text>
-        <ScrollView 
-         horizontal
-         pagingEnabled
-         showsHorizontalScrollIndicator={false}
-        style={styles.promoContainer}>
-          {[
-            { image: require('@assets/banner/Banner1.png'), text: 'Saldo Gratis!' },
-            { image: require('@assets/banner/Banner2.png'), text: 'Diskon Listrik!' },
-          ].map((promo, index) => (
+        <Text style={{ paddingLeft: 25, fontWeight: 'bold' }}>Tentukan Promo Menarik</Text>
+        <ScrollView
+          horizontal
+          pagingEnabled
+          showsHorizontalScrollIndicator={false}
+          style={styles.promoContainer}>
+          {dataBanner?.map((promo, index) => (
             <View key={index} style={styles.promoItem}>
-              <Image source={promo.image as ImageSourcePropType} style={styles.promoImage} />
+              <Image source={{ uri: promo.banner_image }} style={styles.promoImage} />
             </View>
           ))}
         </ScrollView>
@@ -114,7 +138,7 @@ const styles = StyleSheet.create({
   balanceText: {
     color: '#ffffff',
     fontSize: 16,
-    fontWeight:'bold'
+    fontWeight: 'bold'
   },
   balanceAmount: {
     color: '#ffffff',
@@ -132,7 +156,7 @@ const styles = StyleSheet.create({
   servicesGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent:'flex-start',
+    justifyContent: 'flex-start',
     padding: 16,
   },
   serviceItem: {
