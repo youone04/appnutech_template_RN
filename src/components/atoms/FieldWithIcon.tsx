@@ -35,6 +35,7 @@ const FieldWithIcon: React.FC<FieldProps> = (data) => {
                 onChangeText={data.onChange}
                 value={data.value}
                 editable={data.disabled}
+                autoCapitalize='none'
                 
             />
         </View>
