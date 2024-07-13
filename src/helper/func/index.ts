@@ -1,0 +1,18 @@
+export const formatMataUang = (data: bigint) => {
+    return new Intl.NumberFormat('id-ID', {
+        style: 'currency',
+        currency: 'IDR',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+    }).format(data || 0)
+
+}
+
+
+export const formatNumber = (value: string) => {
+    return value.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+};
+
+export const removeFormatting = (formattedValue: string) => {
+    return formattedValue.replace(/[^0-9]/g, '');
+};

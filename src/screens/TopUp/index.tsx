@@ -1,31 +1,88 @@
 import FieldWithIcon from '@components/atoms/FieldWithIcon';
 import { faCalculator } from '@fortawesome/free-solid-svg-icons';
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, Alert, ActivityIndicator } from 'react-native';
+import { formatNumber, removeFormatting } from '@helper/func';
+import { _storeData, getData } from '@helper/LocalStorage';
+import { DataTransaction } from "config/Type/type";
+import { getDataFetchObj } from '@helper/api/Api';
 
-const TopUpScreen: React.FC<{ navigation: any }> = ({navigation}) => {
-  const [balance, setBalance] = useState<number>(0);
-  const [topUpAmount, setTopUpAmount] = useState<string>('');
+const TopUpScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
+  const [balance, setBalance] = useState<DataTransaction | null>(null);
+  const [topUpAmount, setTopUpAmount] = useState<string>('0');
+  const [loading, setLoading] = useState<boolean>(false);
 
-  const handleTopUp = (amount: number) => {
-    setBalance(balance + amount);
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    await getDataFetchObj(setBalance, "balance")
   };
+
+  const handleInputChange = (text: string) => {
+    const numericValue = text.replace(/[^0-9]/g, '');
+    setTopUpAmount(`Rp${formatNumber(numericValue)}`);
+  };
+
+  const handleButtonPress = (amount:any) => {
+    setTopUpAmount(`Rp${amount.toLocaleString('id-ID')}`);
+  };
+
+  const handleTopUp = async () => {
+    const nominal = removeFormatting(topUpAmount);
+    try {
+      const token = await getData();
+      setLoading(true);
+      const response = await fetch(`https://take-home-test-api.nutech-integrasi.app/topup`, {
+        headers: {
+          "Content-Type": "application/json",
+          'Authorization': `Bearer ${token}`
+        },
+        method: 'POST',
+        body: JSON.stringify({ top_up_amount: nominal })
+      });
+      const hasilResponse = await response.json();
+      if (hasilResponse.status !== 0) {
+        setLoading(false);
+        setTopUpAmount('');
+        return Alert.alert(hasilResponse.message);
+      }
+      Alert.alert(hasilResponse.message);
+      fetchData();
+      setTopUpAmount('');
+      setLoading(false);
+    } catch (e) {
+      setLoading(false);
+      setTopUpAmount('');
+
+    }
+  }
+
 
   return (
     <View style={styles.container}>
-     <View style={{backgroundColor:'#e74c3c', borderRadius:10, padding: 18}}>
-     <Text style={styles.balanceText}>Saldo anda</Text>
-     <Text style={styles.balanceAmount}>Rp {balance}</Text>
-     </View>
+      <View style={{ backgroundColor: '#e74c3c', borderRadius: 10, padding: 18 }}>
+        <Text style={styles.balanceText}>Saldo anda</Text>
+        <Text style={styles.balanceAmount}>{new Intl.NumberFormat('id-ID', {
+              style: 'currency',
+              currency: 'IDR',
+              minimumFractionDigits: 0,
+              maximumFractionDigits: 0,
+            }).format(balance?.balance || 0)}</Text>
+      </View>
 
-      <View style={{marginVertical: 40}}>
-      <Text style={styles.promptText}>Silahkan masukan</Text>
-      <Text style={{fontSize:16, fontWeight:'bold'}}>nominal Top Up</Text>
+      <View style={{ marginVertical: 40 }}>
+        <Text style={styles.promptText}>Silahkan masukan</Text>
+        <Text style={{ fontSize: 16, fontWeight: 'bold' }}>nominal Top Up</Text>
       </View>
       <FieldWithIcon
-      styleTextInput={{height: 40}}
-      placeholder='Masukan nominal Top Up'
-      iconName={faCalculator}
+        styleTextInput={{ height: 40 }}
+        placeholder='Masukan nominal Top Up'
+        value={topUpAmount}
+        keyboardType='numeric'
+        onChange={(text: string) => handleInputChange(text)}
+        iconName={faCalculator}
       />
 
       <View style={styles.buttonContainer}>
@@ -33,7 +90,9 @@ const TopUpScreen: React.FC<{ navigation: any }> = ({navigation}) => {
           <TouchableOpacity
             key={amount}
             style={styles.button}
-            onPress={() => handleTopUp(amount)}
+            onPress={() => {
+              handleButtonPress(amount)
+            }}
           >
             <Text style={styles.buttonText}>Rp{amount.toLocaleString('id-ID')}</Text>
           </TouchableOpacity>
@@ -42,9 +101,14 @@ const TopUpScreen: React.FC<{ navigation: any }> = ({navigation}) => {
 
       <TouchableOpacity
         style={styles.topUpButton}
-        onPress={() => navigation.navigate('Pembayaran')}
+        disabled={loading}
+        onPress={() => handleTopUp()}
       >
-        <Text style={styles.topUpButtonText}>Top Up</Text>
+        {
+          loading ?
+            <ActivityIndicator /> :
+            <Text style={styles.topUpButtonText}>Top Up</Text>
+        }
       </TouchableOpacity>
     </View>
   );

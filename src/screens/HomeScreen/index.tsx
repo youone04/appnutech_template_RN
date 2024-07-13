@@ -1,31 +1,47 @@
 import { getDataFetchArray, getDataFetchObj } from '@helper/api/Api';
 import React, { useEffect, useState } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
+
 import {
   View, Text, Image, StyleSheet, ScrollView,
   Dimensions,
   TouchableOpacity
 } from 'react-native';
 import { DataBanner, DataService, DataTransaction } from "config/Type/type";
+// import { useAuth } from '@helper/AuthContext/AuthContext';
 const { width: screenWidth } = Dimensions.get('window');
 
 const HomeScreen: React.FC = () => {
   const [dataBanner, setBanner] = useState<DataBanner[] | null>(null);
   const [dataService, setDataService] = useState<DataService[] | null>(null);
   const [dataTransaction, setDataTransaction] = useState<DataTransaction | null>(null);
+  // const { logout } = useAuth();
 
   useEffect(() => {
     fetchData();
   }, []);
 
+  useFocusEffect(
+    React.useCallback(() => {
+      const updateEndpoint = async () => {
+        await getDataFetchObj(setDataTransaction, "balance")
+      };
+      updateEndpoint();
+      return () => {
+        
+      };
+    }, [])
+  );
+
   const fetchData = async () => {
     await Promise.all(
       [
-      getDataFetchArray(setBanner, "banner"),
-      getDataFetchArray(setDataService, "services"),
-      getDataFetchObj(setDataTransaction, "balance")
+        getDataFetchArray(setBanner, "banner"),
+        getDataFetchArray(setDataService, "services"),
       ])
   };
-
+  // logout()
+  // 
   return (
     <View style={styles.container}>
       <ScrollView>

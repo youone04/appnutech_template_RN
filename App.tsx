@@ -45,6 +45,8 @@ const AppNavigator = () => (
   </Tab.Navigator>
 );
 
+
+
 const RootNavigator: React.FC = () => {
   const { isLoggedIn, login } = useAuth();
   const [loading, seLoading] = useState<boolean>(false);
@@ -70,7 +72,6 @@ const RootNavigator: React.FC = () => {
       </View>
     );
   }
-
   return (
     <NavigationContainer>
       <Stack.Navigator>

@@ -54,7 +54,6 @@ const LoginScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
                 return  Alert.alert(hasilResponse.message);
             }
             Alert.alert(hasilResponse.message)
-            // hasilResponse.data.token
             _storeData(hasilResponse.data.token);
             login();
             setLoading(false);

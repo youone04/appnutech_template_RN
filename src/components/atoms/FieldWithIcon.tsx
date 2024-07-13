@@ -12,7 +12,9 @@ type FieldProps = {
     keyboardType?: KeyboardType;
     secureTextEntry?: boolean;
     onChange?:any;
-    value?: string
+    value?:string;
+    disabled?: boolean
+    
 }
 
 const FieldWithIcon: React.FC<FieldProps> = (data) => {
@@ -32,6 +34,8 @@ const FieldWithIcon: React.FC<FieldProps> = (data) => {
                 secureTextEntry={data.secureTextEntry}
                 onChangeText={data.onChange}
                 value={data.value}
+                editable={data.disabled}
+                
             />
         </View>
     )

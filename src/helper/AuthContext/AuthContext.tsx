@@ -1,3 +1,4 @@
+import { _removeData } from '@helper/LocalStorage';
 import React, { createContext, useState, useContext } from 'react';
 
 type AuthContextType = {
@@ -12,7 +13,10 @@ export const AuthProvider: React.FC<{ children: any }> = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const login = () => setIsLoggedIn(true);
-  const logout = () => setIsLoggedIn(false);
+  const logout = () => {
+    _removeData();
+    setIsLoggedIn(false)
+  };
   
   return (
     <AuthContext.Provider value={{ isLoggedIn, login, logout }}>

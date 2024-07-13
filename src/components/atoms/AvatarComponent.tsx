@@ -2,15 +2,23 @@ import React from 'react';
 import { View, Image, StyleSheet, TouchableOpacity, Text } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faPen } from '@fortawesome/free-solid-svg-icons';
+import {DataProfile} from "config/Type/type";
 
-const AvatarComponent: React.FC = () => {
+const AvatarComponent: React.FC<DataProfile> = (item) => {
+  let cekPhoto = null;
+  if(item?.profile_image&&item.profile_image?.split('/').pop()!=="null"){
+    cekPhoto = item.profile_image;
+  }else{
+    cekPhoto = "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/680px-Default_pfp.svg.png"
+  }
   return (
     <View style={styles.container}>
       <View style={styles.avatarContainer}>
         <Image
           source={{
-            uri: 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png'
-          }} // Replace with your avatar image URL
+            uri: cekPhoto
+            
+          }}
           style={styles.avatar}
         />
         <TouchableOpacity style={styles.editIconContainer}>
@@ -21,7 +29,7 @@ const AvatarComponent: React.FC = () => {
         textAlign: 'center',
         fontWeight: 'bold',
         fontSize: 25
-      }}>Kristanto Wibowo</Text>
+      }}>{`${item.first_name}`}</Text>
     </View>
   );
 };
