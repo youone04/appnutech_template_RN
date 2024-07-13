@@ -2,15 +2,8 @@ import { View, Text, TouchableOpacity, StyleSheet, Image, ActivityIndicator, Ale
 import React, { useState } from 'react';
 import { faAt, faLock, faUser } from '@fortawesome/free-solid-svg-icons';
 import FieldWithIcon from '@components/atoms/FieldWithIcon';
-
-interface DataRegistrasi {
-    email: string;
-    namaDepan: string;
-    namaBelakang: string;
-    password: string;
-    konfirmasiPassword: string;
-}
-
+import { DataRegistrasi } from "config/Type/type"
+import { validataForm } from '@helper/func';
 interface DataNotif {
     notif: boolean
 }
@@ -33,19 +26,8 @@ const RegistrasiScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         }));
     };
 
-    const validateForm = () => {
-        const invalidFields: (keyof DataRegistrasi)[] = [];
-        Object.keys(dataRegistrasi).forEach((item) => {
-            const key = item as keyof DataRegistrasi;
-            if (!dataRegistrasi[key]) {
-                invalidFields.push(key);
-            }
-        });
-        return invalidFields;
-    };
-
-    const submit = () => {
-        const invalidFields = validateForm();
+    const submit = async () => {
+        const invalidFields = validataForm(dataRegistrasi);
         if (invalidFields.length > 0) {
             setNotif({ notif: true });
         } else if (dataRegistrasi.password !== dataRegistrasi.konfirmasiPassword) {
@@ -62,7 +44,6 @@ const RegistrasiScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         }
 
     }
-
     const postData = async (payload: object) => {
         try {
             setLoading(true);
@@ -86,7 +67,6 @@ const RegistrasiScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
                 });
             }
             setLoading(false);
-
         } catch (e) {
             setLoading(false);
             setDataRegistrasi({
@@ -99,55 +79,68 @@ const RegistrasiScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
 
         }
     }
-
+    const valid = validataForm(dataRegistrasi);
     return (
         <View style={styles.container}>
             <View style={styles.banner}>
                 <Image source={require('@assets/logos/Logo.png')} style={styles.logo} />
                 <Text style={styles.title}>SIMS PPOB</Text>
             </View>
-
             <Text style={styles.subtitle}>Lengkapi data untuk membuat akun</Text>
 
             <FieldWithIcon
+                id='email'
                 placeholder="masukan email anda"
                 iconName={faAt}
                 keyboardType='email-address'
                 value={dataRegistrasi.email}
                 onChange={(text: string) => handleInputChange('email', text)}
+                isNull={notif.notif}
+                validateForm={valid}
             />
 
             <FieldWithIcon
+                id='namaDepan'
                 placeholder="nama depan"
                 iconName={faUser}
                 value={dataRegistrasi.namaDepan}
                 onChange={(text: string) => handleInputChange('namaDepan', text)}
+                validateForm={valid}
+                isNull={notif.notif}
 
             />
 
             <FieldWithIcon
+                id='namaBelakang'
                 placeholder="nama belakang"
                 iconName={faUser}
                 value={dataRegistrasi.namaBelakang}
                 onChange={(text: string) => handleInputChange('namaBelakang', text)}
+                validateForm={valid}
+                isNull={notif.notif}
             />
 
             <FieldWithIcon
+                id='password'
                 placeholder="buat password"
                 iconName={faLock}
                 value={dataRegistrasi.password}
                 secureTextEntry={true}
                 onChange={(text: string) => handleInputChange('password', text)}
+                validateForm={valid}
+                isNull={notif.notif}
             />
             <FieldWithIcon
+                id='konfirmasiPassword'
                 placeholder="konfirmasi password"
                 value={dataRegistrasi.konfirmasiPassword}
                 iconName={faLock}
                 secureTextEntry={true}
                 onChange={(text: string) => handleInputChange('konfirmasiPassword', text)}
+                validateForm={valid}
+                isNull={notif.notif}
             />
-            <View style={{ width: '100%' }}>
-                {notif.notif ? <Text style={{ textAlign: 'center', color: 'red', margin: 3 }}>Semua field harus terisi</Text> : ""}
+            <View style={{ width: '100%', marginTop: 25 }}>
                 <TouchableOpacity disabled={loading} onPress={submit} style={styles.button}>
                     {
                         loading ?
@@ -165,13 +158,6 @@ const RegistrasiScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-    banner: {
-        flexDirection: 'row', // Arrange children in a row
-        alignItems: 'center',
-    },
-    icon: {
-        marginRight: 10,
-    },
     container: {
         flex: 1,
         backgroundColor: '#fff',
@@ -179,19 +165,29 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         padding: 20,
     },
+    banner: {
+        flexDirection: 'row', // Arrange children in a row
+        alignItems: 'center',
+    },
+    icon: {
+        marginRight: 10,
+        alignSelf: 'center'
+    },
+    title: {
+        fontSize: 20,
+        color: '#000',
+        marginBottom: 20,
+        alignSelf: 'center'
+    },
     logo: {
-        width: 50,
-        height: 50,
+        width: 30,
+        height: 30,
         marginBottom: 20,
         marginHorizontal: 10
     },
-    title: {
-        fontSize: 25,
-        color: '#000',
-        marginBottom: 10,
-    },
+
     subtitle: {
-        fontSize: 30,
+        fontSize: 28,
         color: '#000',
         fontWeight: 'bold',
         marginBottom: 30,

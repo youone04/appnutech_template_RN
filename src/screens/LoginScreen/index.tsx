@@ -24,7 +24,6 @@ const LoginScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         }));
     };
 
-
     const handleLogin = () => {
         const payload: object = {
             email: dataLogin.email,
@@ -74,9 +73,7 @@ const LoginScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
                 <Image source={require('@assets/logos/Logo.png')} style={styles.logo} />
                 <Text style={styles.title}>SIMS PPOB</Text>
             </View>
-
             <Text style={styles.subtitle}>Masuk atau buat akun untuk memulai</Text>
-
             <FieldWithIcon
                 placeholder="masukan email anda"
                 iconName={faAt}

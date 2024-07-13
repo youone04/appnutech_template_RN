@@ -1,7 +1,8 @@
 import React from 'react';
-import { View, TextInput, StyleSheet, ViewStyle, TextStyle, KeyboardType } from 'react-native';
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
-import { Text } from 'react-native-svg';
+import { View, TextInput, StyleSheet, ViewStyle, TextStyle, KeyboardType, Text, Dimensions } from 'react-native';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
+
 type FieldProps = {
     placeholder?: string;
     iconName?: any;
@@ -11,33 +12,64 @@ type FieldProps = {
     count?: number;
     keyboardType?: KeyboardType;
     secureTextEntry?: boolean;
-    onChange?:any;
-    value?:string;
+    onChange?: any;
+    value?: string;
     disabled?: boolean
-    
+    id?: string
+    isNull?: boolean
+    validateForm?: any
+
 }
 
 const FieldWithIcon: React.FC<FieldProps> = (data) => {
+    let dataNotValid = [];
+    if (data?.validateForm) {
+        dataNotValid = data?.validateForm;
+    }
+    console.log(data.isNull)
     return (
-        <View style={[styles.container, data.styleContainer]}>
+        <View style={{ width: SCREEN_WIDTH - 40, marginBottom: 7 }}>
+            <View style={
+                [styles.container,
+                data.styleContainer,
+                dataNotValid.includes(data.id) && data.isNull?
+                    { borderColor: 'red' } : {}
+                ]}>
+                {
+                    data.iconName ?
+                        <FontAwesomeIcon icon={data.iconName} style={[
+                            dataNotValid.includes(data.id) && data.isNull?
+                            styles.iconRed:
+                            styles.icon
+
+                        ]} /> :
+                        <Text></Text>
+
+                }
+                <TextInput
+                    style={[styles.input, data.styleTextInput]}
+                    placeholder={data.placeholder}
+                    placeholderTextColor="#aaa"
+                    keyboardType={data.keyboardType}
+                    secureTextEntry={data.secureTextEntry}
+                    onChangeText={data.onChange}
+                    value={data.value}
+                    editable={data.disabled}
+                    autoCapitalize='none'
+                    id={data.id}
+                />
+            </View>
             {
-                data.iconName ?
-                    <FontAwesomeIcon icon={data.iconName} style={styles.icon} /> :
-                    <Text></Text>
+                dataNotValid.includes(data.id) && data.isNull ?
+                    <Text style={{
+                        color: 'red',
+                        right: 6,
+                        bottom: 0,
+                        position: 'absolute'
+                    }}>Field tidak boleh kosong</Text> : null
 
             }
-            <TextInput
-                style={[styles.input, data.styleTextInput]}
-                placeholder={data.placeholder}
-                placeholderTextColor="#aaa"
-                keyboardType={data.keyboardType}
-                secureTextEntry={data.secureTextEntry}
-                onChangeText={data.onChange}
-                value={data.value}
-                editable={data.disabled}
-                autoCapitalize='none'
-                
-            />
+
         </View>
     )
 }
@@ -54,13 +86,18 @@ const styles = StyleSheet.create({
     },
     icon: {
         marginRight: 10,
-        color:'gray'
+        color: 'gray'
+    },
+    iconRed: {
+        marginRight: 10,
+        color: 'red'
     },
     input: {
         flex: 1,
         fontSize: 16,
-        height: 50,
-        borderRadius: 5,
+        height: 45,
+        borderRadius: 5
+
     }
 });
 

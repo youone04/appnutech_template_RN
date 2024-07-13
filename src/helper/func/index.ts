@@ -1,3 +1,5 @@
+import {DataRegistrasi} from "config/Type/type"
+
 export const formatMataUang = (data: bigint) => {
     return new Intl.NumberFormat('id-ID', {
         style: 'currency',
@@ -15,4 +17,15 @@ export const formatNumber = (value: any) => {
 
 export const removeFormatting = (formattedValue: string) => {
     return formattedValue.replace(/[^0-9]/g, '');
+};
+
+export const validataForm = (data: DataRegistrasi) => {
+    const invalidFields: (keyof DataRegistrasi)[] = [];
+    Object.keys(data).forEach((item) => {
+        const key = item as keyof DataRegistrasi;
+        if (!data[key]) {
+            invalidFields.push(key);
+        }
+    });
+    return invalidFields
 };

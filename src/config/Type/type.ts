@@ -40,3 +40,11 @@ export interface FieldProfile {
   first_name?: string,
   last_name?: string
 }
+
+export interface DataRegistrasi {
+  email: string;
+  namaDepan: string;
+  namaBelakang: string;
+  password: string;
+  konfirmasiPassword: string;
+}
