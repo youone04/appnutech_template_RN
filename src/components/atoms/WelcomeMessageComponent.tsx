@@ -8,7 +8,6 @@ const WelcomeMessageComponent: React.FC<DataProfile> = (item) => {
         </View>
     )
 }
-
 const styles = StyleSheet.create({
     welcome: {
         padding: 16,

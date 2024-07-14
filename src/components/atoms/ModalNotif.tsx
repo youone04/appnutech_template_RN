@@ -2,7 +2,6 @@ import React from 'react';
 import { Alert, Modal, StyleSheet, Text, Pressable, View } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faClose } from '@fortawesome/free-solid-svg-icons';
-
 interface  DataVisible {
     cek?: boolean
     message?: string
@@ -37,7 +36,6 @@ const ModalNotif: React.FC<DataPropsModalNotif> = (data) => {
         </View>
     );
 };
-
 const styles = StyleSheet.create({
     centeredView: {
         justifyContent: 'center',
@@ -76,5 +74,4 @@ const styles = StyleSheet.create({
         right: 65
     },
 });
-
 export default ModalNotif;

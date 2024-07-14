@@ -3,7 +3,7 @@ import { View, TextInput, StyleSheet, ViewStyle, TextStyle, KeyboardType, Text, 
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import ShowNotifField from '@components/atoms/ShowNotifField';
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
-type FieldProps = {
+type FieldPropsWithIcon = {
     placeholder?: string;
     iconName?: any;
     styleTextInput?: TextStyle;
@@ -24,7 +24,7 @@ type FieldProps = {
     isEmail?: boolean,
 
 }
-const FieldWithIcon: React.FC<FieldProps> = (data) => {
+const FieldWithIcon: React.FC<FieldPropsWithIcon> = (data) => {
     let dataNotValid = [];
     if (data?.validateForm) {
         dataNotValid = data?.validateForm;

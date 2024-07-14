@@ -1,7 +1,7 @@
 import FieldWithIcon from '@components/atoms/FieldWithIcon';
 import { faCalculator } from '@fortawesome/free-solid-svg-icons';
-import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Alert, ActivityIndicator } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
 import { delay, formatNumber, removeFormatting } from '@helper/func';
 import { _storeData, getData } from '@helper/LocalStorage';
 import { DataTransaction } from "config/Type/type";
@@ -24,9 +24,6 @@ const TopUpScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     cek: false,
     message: ""
   });
-
-
-
   useFocusEffect(
     React.useCallback(() => {
       fetchData();
@@ -35,20 +32,16 @@ const TopUpScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         };
     }, [])
 );
-
   const fetchData = async () => {
     await getDataFetchObj(setBalance, "balance")
   };
-
   const handleInputChange = (text: string) => {
     const numericValue = text.replace(/[^0-9]/g, '');
     setTopUpAmount(`Rp${formatNumber(numericValue)}`);
   };
-
   const handleButtonPress = (amount: any) => {
     setTopUpAmount(`Rp${amount.toLocaleString('id-ID')}`);
   };
-
   const handleTopUp = async () => {
     const nominal = removeFormatting(topUpAmount);
     try {
@@ -68,19 +61,14 @@ const TopUpScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         setLoading(false);
         handleRepsonseFailed();
       }
-
       fetchData();
       setLoading(false);
       handleRepsonseSucces()
     } catch (e) {
       setLoading(false);
       handleRepsonseFailed();
-
     }
   }
-
-
-
   const handleRepsonseFailed = async () => {
     setModalVisible(prev => {
       return {
@@ -95,9 +83,7 @@ const TopUpScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         cek: true
       }
     })
-
   }
-
   const handleRepsonseSucces = async () => {
     setModalVisible(prev => {
       return {
@@ -112,9 +98,7 @@ const TopUpScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         cek: true
       }
     })
-
   }
-
   const handleCloseAllStateModal =  async() => {
     await delay(500);
     setModalVisible(prev => {
@@ -140,7 +124,6 @@ const TopUpScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     })
     navigation.navigate("Home")
   }
-
   const nominal = Number(removeFormatting(topUpAmount));
   return (
     <View style={styles.container}>
@@ -153,7 +136,6 @@ const TopUpScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
           maximumFractionDigits: 0,
         }).format(balance?.balance || 0)}</Text>
       </View>
-
       <View style={{ marginVertical: 40 }}>
         <Text style={styles.promptText}>Silahkan masukan</Text>
         <Text style={{ fontSize: 16, fontWeight: 'bold' }}>nominal Top Up</Text>
@@ -166,7 +148,6 @@ const TopUpScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         onChange={(text: string) => handleInputChange(text)}
         iconName={faCalculator}
       />
-
       <View style={styles.buttonContainer}>
         {[10000, 20000, 50000, 100000, 250000, 500000].map((amount) => (
           <TouchableOpacity
@@ -180,7 +161,6 @@ const TopUpScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
           </TouchableOpacity>
         ))}
       </View>
-
       <TouchableOpacity
         style={styles.topUpButton}
         disabled={loading || (nominal < 10000)}
@@ -204,7 +184,6 @@ const TopUpScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         loading={loading}
         textButton='Ya, lanjutkan Top Up'
         setModalVisible={setModalVisible} />
-
       <ModalComponent
         isSucces={true}
         loading={loading}
@@ -215,7 +194,6 @@ const TopUpScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         modalVisible={modalVisibleSucces}
         handleCloseAllStateModal={() => handleCloseAllStateModal()}
         setModalVisible={setModalVisibleSucces} />
-
       <ModalComponent
         isFailed={true}
         loading={loading}
@@ -229,7 +207,6 @@ const TopUpScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -289,5 +266,4 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
-
 export default TopUpScreen;

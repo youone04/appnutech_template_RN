@@ -12,14 +12,12 @@ import { faEye } from '@fortawesome/free-solid-svg-icons';
 import HeaderCcmponent from '@components/atoms/HeaderComponent';
 import WelcomeMessageComponent from '@components/atoms/WelcomeMessageComponent';
 const { width: screenWidth } = Dimensions.get('window');
-
 const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   const [dataBanner, setBanner] = useState<DataBanner[] | null>(null);
   const [dataService, setDataService] = useState<DataService[] | null>(null);
   const [dataTransaction, setDataTransaction] = useState<DataTransaction | null>(null);
   const [dataProfile, setDataProfile] = useState<DataProfile | null>(null);
   const [isValueVisible, setVisible] = useState<boolean>(true);
-
   useEffect(() => {
     fetchData();
   }, []);
@@ -36,7 +34,6 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
       };
     }, [])
   );
-
   const fetchData = async () => {
     await Promise.all(
       [
@@ -44,7 +41,6 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         getDataFetchArray(setDataService, "services"),
       ])
   };
-
   return (
     <View style={styles.container}>
       <ScrollView>
@@ -57,7 +53,6 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         <WelcomeMessageComponent
           first_name={dataProfile?.first_name}
         />
-
         {/* Balance Card */}
         <View style={styles.balanceCard}>
           <Text style={styles.balanceText}>Saldo anda</Text>
@@ -105,7 +100,6 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
             </View>
           </TouchableOpacity>
         </View>
-
         {/* Promotional Banners */}
         <Text style={{ paddingLeft: 25, fontWeight: 'bold' }}>Tentukan Promo Menarik</Text>
         <ScrollView
@@ -123,7 +117,6 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   circle: {
     width: 11,
@@ -218,5 +211,4 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
-
 export default HomeScreen;

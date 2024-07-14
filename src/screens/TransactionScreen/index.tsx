@@ -1,33 +1,27 @@
 import CardTransaksi from '@components/CardMod/CardTransaksi';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { View, Text, TouchableOpacity, StyleSheet, FlatList, ActivityIndicator } from 'react-native';
 import { DataTransaction, DataRecord } from "config/Type/type";
 import { getDataFetchObj, getDataFetchObjWithPagination } from '@helper/api/Api';
-
 const TransactionScreen: React.FC = () => {
     const [balance, setBalance] = useState<DataTransaction | null>(null);
     const [DataHistoriTransaction, setHistoruTransaction] = useState<DataRecord[]>([])
     const [offset, setOffset] = useState<number>(0);
     const [loading, setLoading] = useState<boolean>(false);
-
     useFocusEffect(
         React.useCallback(() => {
-          // Function to call your endpoint
           fetchData();
           return () => {
-            // Cleanup if needed when the screen is unfocused
           };
         }, [])
       );
-
     const fetchData = async () => {
         await Promise.all([
             getDataFetchObj(setBalance, "balance"),
             getDataFetchObjWithPagination(setHistoruTransaction, `transaction/history?offset=${offset}&limit=${5}`, offset)
         ]);
     }
-
     const loadMore = () => {
         setLoading(true);
         setTimeout(async () => {
@@ -35,7 +29,6 @@ const TransactionScreen: React.FC = () => {
             await getDataFetchObjWithPagination(setHistoruTransaction, `transaction/history?offset=${offset + 1}&limit=${5}`, offset + 1);
             setLoading(false);
         }, 3000)
-
     }
     return (
         <View style={styles.container}>
@@ -55,9 +48,7 @@ const TransactionScreen: React.FC = () => {
                 data={DataHistoriTransaction}
                 keyExtractor={(item) => `${item?.invoice_number}`}
                 renderItem={CardTransaksi}
-                // onEndReached={loadMore}
                 onEndReachedThreshold={0.5}
-            // ListFooterComponent={loading ? <ActivityIndicator size="large" color="#0000ff" /> : <Text/>}
             />
             {
                 loading ?
@@ -72,7 +63,6 @@ const TransactionScreen: React.FC = () => {
         </View>
     );
 };
-
 const styles = StyleSheet.create({
     logo: {
         width: 35,
@@ -139,5 +129,4 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
 });
-
 export default TransactionScreen;

@@ -4,8 +4,6 @@ import { faAt, faLock, faUser } from '@fortawesome/free-solid-svg-icons';
 import FieldWithIcon from '@components/atoms/FieldWithIcon';
 import { DataRegistrasi, DataNotif } from "config/Type/type"
 import { validataForm, validateEmail } from '@helper/func';
-
-
 const RegistrasiScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     const [dataRegistrasi, setDataRegistrasi] = useState<DataRegistrasi>({
         email: "",
@@ -16,14 +14,12 @@ const RegistrasiScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     });
     const [notif, setNotif] = useState<DataNotif>({ notif: false });
     const [loading, setLoading] = useState<boolean>(false);
-
     const handleInputChange = (field: keyof DataRegistrasi, text: string) => {
         setDataRegistrasi(prevData => ({
             ...prevData,
             [field]: text
         }));
     };
-
     const submit = async () => {
         const invalidFields = validataForm(dataRegistrasi);
         if (invalidFields.length > 0) {
@@ -44,7 +40,6 @@ const RegistrasiScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
             };
             postData(payload);
         }
-
     }
     const postData = async (payload: object) => {
         try {
@@ -56,7 +51,6 @@ const RegistrasiScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
                 method: 'POST',
                 body: JSON.stringify(payload)
             });
-
             const hasilResponse = await response.json();
             if (hasilResponse.status !== 200) {
                 Alert.alert(hasilResponse.message)
@@ -78,7 +72,6 @@ const RegistrasiScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
                 password: "",
                 konfirmasiPassword: "",
             })
-
         }
     }
     const valid = validataForm(dataRegistrasi);
@@ -89,7 +82,6 @@ const RegistrasiScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
                 <Text style={styles.title}>SIMS PPOB</Text>
             </View>
             <Text style={styles.subtitle}>Lengkapi data untuk membuat akun</Text>
-
             <FieldWithIcon
                 id='email'
                 placeholder="masukan email anda"
@@ -101,7 +93,6 @@ const RegistrasiScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
                 isNull={notif.notif}
                 validateForm={valid}
             />
-
             <FieldWithIcon
                 id='namaDepan'
                 placeholder="nama depan"
@@ -112,7 +103,6 @@ const RegistrasiScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
                 isNull={notif.notif}
 
             />
-
             <FieldWithIcon
                 id='namaBelakang'
                 placeholder="nama belakang"
@@ -122,7 +112,6 @@ const RegistrasiScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
                 validateForm={valid}
                 isNull={notif.notif}
             />
-
             <FieldWithIcon
                 id='password'
                 placeholder="buat password"
@@ -162,7 +151,6 @@ const RegistrasiScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         </View>
     );
 };
-
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -231,5 +219,4 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
 });
-
 export default RegistrasiScreen;

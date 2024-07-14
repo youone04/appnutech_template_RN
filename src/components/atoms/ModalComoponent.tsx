@@ -1,7 +1,6 @@
 import { formatMataUang } from '@helper/func';
 import React from 'react';
 import { Alert, Modal, StyleSheet, Text, Pressable, View, Image } from 'react-native';
-
 interface DataVisible {
     cek?: boolean
     message?: string,
@@ -20,7 +19,6 @@ interface DataPropsModalComponent {
     loading?: boolean
     textButton?: string
 }
-
 const ModalComponent: React.FC<DataPropsModalComponent> = (data) => {
     return (
         <View style={styles.centeredView}>
@@ -62,7 +60,6 @@ const ModalComponent: React.FC<DataPropsModalComponent> = (data) => {
 
                                     }
                                 </Pressable>
-
                                 <Pressable
                                     style={[styles.button]}
                                     disabled={data.loading}
@@ -171,5 +168,4 @@ const styles = StyleSheet.create({
         fontWeight: 'bold'
     }
 });
-
 export default ModalComponent;

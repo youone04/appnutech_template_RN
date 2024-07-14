@@ -8,7 +8,6 @@ import { useRoute, RouteProp, useFocusEffect } from '@react-navigation/native';
 import { DataTransaction } from "config/Type/type";
 import { getData } from '@helper/LocalStorage';
 import ModalComponent from '@components/atoms/ModalComoponent';
-
 // Define your route params type
 type RootStackParamList = {
     Pembayaran: {
@@ -18,7 +17,6 @@ type RootStackParamList = {
         service_tariff: number
     };
 };
-
 type PembayaranScreenRouteProp = RouteProp<RootStackParamList, 'Pembayaran'>;
 const PembayaranScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     const [balance, setBalance] = useState<DataTransaction | null>(null);
@@ -36,9 +34,7 @@ const PembayaranScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         cek: false,
         message: ""
     });
-
     const { service_tariff, service_code, service_icon, service_name } = route.params;
-
     useFocusEffect(
         React.useCallback(() => {
             const updateEndpoint = async () => {
@@ -50,7 +46,6 @@ const PembayaranScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
             };
         }, [])
     );
-
     const handlePay = async () => {
         try {
             const token = await getData();
@@ -78,7 +73,6 @@ const PembayaranScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
 
         }
     };
-
     const handleRepsonseFailed = async () => {
         setModalVisible(prev => {
             return {
@@ -95,7 +89,6 @@ const PembayaranScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         })
 
     }
-
     const handleRepsonseSucces = async () => {
         setModalVisible(prev => {
             return {
@@ -112,7 +105,6 @@ const PembayaranScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         })
 
     }
-
     const handleCloseAllStateModal =  async() => {
         await delay(500);
         setModalVisible(prev => {
@@ -138,14 +130,12 @@ const PembayaranScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         })
         navigation.navigate("Home")
       }
-
     return (
         <View style={styles.container}>
             <View style={{ backgroundColor: '#e74c3c', borderRadius: 10, padding: 18 }}>
                 <Text style={styles.balanceText}>Saldo anda</Text>
                 <Text style={styles.balanceAmount}>{formatMataUang(balance?.balance)}</Text>
             </View>
-
             <View style={{ marginVertical: 40 }}>
                 <Text style={styles.promptText}>Pembayaran</Text>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -153,7 +143,6 @@ const PembayaranScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
                     <Text style={{ fontSize: 16, fontWeight: 'bold', alignSelf: 'center' }}>{service_name}</Text>
                 </View>
             </View>
-
             <FieldWithIcon
                 styleTextInput={{ height: 40 }}
                 placeholder='Masukan nominal Top Up'
@@ -166,7 +155,6 @@ const PembayaranScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
                 }).format(service_tariff || 0)}
                 iconName={faCalculator}
             />
-
             <TouchableOpacity
                 style={styles.pembayaranButton}
                 onPress={() => setModalVisible(prev => ({
@@ -218,7 +206,6 @@ const PembayaranScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         </View>
     );
 };
-
 const styles = StyleSheet.create({
     logo: {
         width: 35,
@@ -285,5 +272,4 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
 });
-
 export default PembayaranScreen;

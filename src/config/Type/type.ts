@@ -2,7 +2,6 @@ export interface DataBanner {
   banner_name: string,
   banner_image: string,
   description: string
-
 }
 export interface DataService {
   service_code: string,
@@ -35,13 +34,11 @@ export interface DataProfile {
   handleChoosePhoto?: any,
   navigation?: any
 }
-
 export interface FieldProfile {
   email?: string,
   first_name?: string,
   last_name?: string
 }
-
 export interface DataRegistrasi {
   email: string;
   namaDepan: string;
@@ -53,7 +50,6 @@ export interface DataLogin {
   email: string;
   password: string;
 }
-
 export interface DataNotif {
   notif: boolean
 }

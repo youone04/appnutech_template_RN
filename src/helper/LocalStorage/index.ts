@@ -4,10 +4,8 @@ export const _storeData = async (value: string) => {
     await AsyncStorage.setItem("@token", value);
   } catch (error) {
     console.log(error)
-    // Error saving data
   }
 };
-
 export const getData = async () => {
   try {
     const value = await AsyncStorage.getItem('@token');
@@ -16,7 +14,6 @@ export const getData = async () => {
     return "error";
   }
 };
-
 export const _removeData = async () => {
   try {
     await AsyncStorage.removeItem('@token');

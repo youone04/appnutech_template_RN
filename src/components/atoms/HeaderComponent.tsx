@@ -1,6 +1,5 @@
 import { DataProfile } from "config/Type/type";
 import { View, Image, Text, StyleSheet, TouchableOpacity } from "react-native";
-
 const HeaderCcmponent: React.FC<DataProfile> = (item) => {
     return(
         <View style={styles.header}>
@@ -14,9 +13,7 @@ const HeaderCcmponent: React.FC<DataProfile> = (item) => {
       </View>
     )
 }
-
 const styles = StyleSheet.create({
-   
     header: {
       flexDirection: 'row',
       justifyContent: 'space-between',

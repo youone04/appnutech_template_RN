@@ -7,8 +7,6 @@ import { _storeData } from '@helper/LocalStorage';
 import { validataForm, validateEmail } from '@helper/func';
 import { DataLogin, DataNotif } from "config/Type/type"
 import ModalNotif from '@components/atoms/ModalNotif';
-
-
 const LoginScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     const { login } = useAuth();
     const [notif, setNotif] = useState<DataNotif>({ notif: false });
@@ -21,15 +19,12 @@ const LoginScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         cek: false,
         message: ""
     });
-
-
     const handleInputChange = (field: keyof DataLogin, text: string) => {
         setDatalogin(prevData => ({
             ...prevData,
             [field]: text
         }));
     };
-
     const handleLogin = () => {
         const invalidFields = validataForm(dataLogin);
         if (invalidFields.length > 0) {
@@ -48,7 +43,6 @@ const LoginScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         }
 
     };
-
     const postData = async (payload: object) => {
         try {
             setLoading(true);
@@ -59,7 +53,6 @@ const LoginScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
                 method: 'POST',
                 body: JSON.stringify(payload)
             });
-
             const hasilResponse = await response.json();
             if (hasilResponse.status !== 0) {
                 setModalVisible((prev) => ({
@@ -127,7 +120,6 @@ const LoginScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         </View>
     );
 };
-
 const styles = StyleSheet.create({
     banner: {
         flexDirection: 'row', // Arrange children in a row
@@ -193,5 +185,4 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
 });
-
 export default LoginScreen;

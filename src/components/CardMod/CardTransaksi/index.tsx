@@ -1,9 +1,7 @@
 import React from 'react';
 import { View, Text } from 'react-native';
-// import moment from "moment";
-
 import { DataRecord } from "config/Type/type";
-const CardTransaksi = ({ item } : { item: DataRecord }) => {
+const CardTransaksi = ({ item }: { item: DataRecord }) => {
     return (
         <View style={{
             shadowColor: "#000",
@@ -56,6 +54,4 @@ const CardTransaksi = ({ item } : { item: DataRecord }) => {
         </View>
     )
 }
-
-
 export default CardTransaksi;

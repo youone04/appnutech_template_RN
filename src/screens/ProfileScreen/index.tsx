@@ -20,8 +20,6 @@ const ProfileScreen: React.FC = () => {
     })
     const [loading , setLoading] = useState<boolean>(false);
     const [cekPhoto, setCekPhoto] = useState<string | null>(null);
-
-
     useFocusEffect(
         React.useCallback(() => {
           const updateEndpoint = async () => {
@@ -29,9 +27,7 @@ const ProfileScreen: React.FC = () => {
           };
           updateEndpoint();
           return () => {
-    
           };
-
         }, [])
       );
     const fetchData = async () => {
@@ -45,7 +41,6 @@ const ProfileScreen: React.FC = () => {
             }
         })
     }
-
     const handleInputChange = (field: string, text: string) => {
         setFieldProfile(prevData => {
             return {
@@ -54,7 +49,6 @@ const ProfileScreen: React.FC = () => {
             }
         })
     }
-
     const postData = async () => {
         try {
             setLoading(true);
@@ -63,7 +57,6 @@ const ProfileScreen: React.FC = () => {
                 first_name: fieldProfile?.first_name,
                 last_name: fieldProfile?.last_name
               }
-              
             const response = await fetch(`https://take-home-test-api.nutech-integrasi.app/profile/update`, {
                 headers: {
                     "Content-Type": "application/json",
@@ -72,7 +65,6 @@ const ProfileScreen: React.FC = () => {
                 method: 'PUT',
                 body: JSON.stringify(payload)
             });
-
             const hasilResponse = await response.json();
             if (hasilResponse.status !== 0) {
                 setLoading(false);
@@ -83,13 +75,11 @@ const ProfileScreen: React.FC = () => {
             setLoading(false);
             fetchData();
             setHandleEdit(!hanldeEdit);
-
         } catch (e) {
             setLoading(false);
             setHandleEdit(!hanldeEdit);
         }
     }
-
     const handleChoosePhoto = () => {
         launchImageLibrary({ mediaType: 'photo' }, response => {
           if (response.didCancel) {
@@ -105,7 +95,6 @@ const ProfileScreen: React.FC = () => {
           }
         });
       };
-
       const handleUploadPhoto = async (photoUri: string) => {
         const formData = new FormData();
         formData.append('file', {
@@ -113,7 +102,6 @@ const ProfileScreen: React.FC = () => {
           name: 'photo.jpg',
           type: 'image/jpeg',
         } as any);
-    
         try {
             const token = await getData();
           const response = await fetch('https://take-home-test-api.nutech-integrasi.app/profile/image', {
@@ -140,7 +128,6 @@ const ProfileScreen: React.FC = () => {
           Alert.alert('Upload failed', 'There was an error uploading the photo. 2');
         }
       };
-
     return (
         <View style={styles.container}>
             <View style={[styles.box, { flex: 1 }]}>
@@ -163,7 +150,6 @@ const ProfileScreen: React.FC = () => {
                         value={fieldProfile.email}
                         disabled={false}
                         iconName={faAt} />
-
                     <Text style={{ marginVertical: 10 }}>Nama Depan</Text>
                     <FieldWithIcon
                         placeholder="Nama Depan"
@@ -179,7 +165,6 @@ const ProfileScreen: React.FC = () => {
                         onChange={(text: string) => handleInputChange("last_name", text)}
                         disabled={hanldeEdit}
                         iconName={faUser} />
-
                     {
                         !hanldeEdit ?
                             <>
@@ -195,7 +180,6 @@ const ProfileScreen: React.FC = () => {
                                 </View>
                             </>
                             :
-
                             <>
                                 <View style={{ alignItems: 'center' }}>
                                     <TouchableOpacity disabled={loading} onPress={() => postData()} style={[styles.buttonEdit]}>
@@ -212,15 +196,11 @@ const ProfileScreen: React.FC = () => {
                                     </TouchableOpacity>
                                 </View>
                             </>
-
                     }
-
                 </View>
-
             </View>
         </View>
     );
-
 }
 const styles = StyleSheet.create({
     buttonEdit: {
@@ -259,7 +239,6 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: 'column',
         backgroundColor: 'white'
-
     },
     text: {
         fontSize: 20,
@@ -268,11 +247,8 @@ const styles = StyleSheet.create({
         height: 100,
     },
 });
-
 // flex: 1 => 1 kali lebih banyak
 // flex: 2 => 2 kali lebih banyak dst
-
 // pasangannya
 // flex dan flexDirection
-
 export default ProfileScreen;

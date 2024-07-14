@@ -10,7 +10,6 @@ interface DataShowNotifProps {
     isPassword?: boolean,
     isEmail?: boolean,
 }
-
 const ShowNotifField: React.FC<DataShowNotifProps> = (data) => {
     return (
         <>
