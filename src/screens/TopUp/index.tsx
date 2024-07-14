@@ -2,19 +2,39 @@ import FieldWithIcon from '@components/atoms/FieldWithIcon';
 import { faCalculator } from '@fortawesome/free-solid-svg-icons';
 import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Alert, ActivityIndicator } from 'react-native';
-import { formatNumber, removeFormatting } from '@helper/func';
+import { delay, formatNumber, removeFormatting } from '@helper/func';
 import { _storeData, getData } from '@helper/LocalStorage';
 import { DataTransaction } from "config/Type/type";
 import { getDataFetchObj } from '@helper/api/Api';
-
-const TopUpScreen: React.FC= () => {
+import ModalComponent from '@components/atoms/ModalComoponent';
+import { useFocusEffect } from '@react-navigation/native';
+const TopUpScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   const [balance, setBalance] = useState<DataTransaction | null>(null);
   const [topUpAmount, setTopUpAmount] = useState<string>('0');
   const [loading, setLoading] = useState<boolean>(false);
+  const [modalVisible, setModalVisible] = useState<object>({
+    cek: false,
+    message: ""
+  });
+  const [modalVisibleSucces, setModalVisibleSucces] = useState<object>({
+    cek: false,
+    message: ""
+  });
+  const [modalVisibleFailed, setModalVisibleFailed] = useState<object>({
+    cek: false,
+    message: ""
+  });
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+
+
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchData();
+        return () => {
+          setTopUpAmount('0');
+        };
+    }, [])
+);
 
   const fetchData = async () => {
     await getDataFetchObj(setBalance, "balance")
@@ -25,7 +45,7 @@ const TopUpScreen: React.FC= () => {
     setTopUpAmount(`Rp${formatNumber(numericValue)}`);
   };
 
-  const handleButtonPress = (amount:any) => {
+  const handleButtonPress = (amount: any) => {
     setTopUpAmount(`Rp${amount.toLocaleString('id-ID')}`);
   };
 
@@ -34,6 +54,7 @@ const TopUpScreen: React.FC= () => {
     try {
       const token = await getData();
       setLoading(true);
+      await delay(3000);
       const response = await fetch(`https://take-home-test-api.nutech-integrasi.app/topup`, {
         headers: {
           "Content-Type": "application/json",
@@ -45,31 +66,92 @@ const TopUpScreen: React.FC= () => {
       const hasilResponse = await response.json();
       if (hasilResponse.status !== 0) {
         setLoading(false);
-        setTopUpAmount('');
-        return Alert.alert(hasilResponse.message);
+        handleRepsonseFailed();
       }
-      Alert.alert(hasilResponse.message);
+
       fetchData();
-      setTopUpAmount('');
       setLoading(false);
+      handleRepsonseSucces()
     } catch (e) {
       setLoading(false);
-      setTopUpAmount('');
+      handleRepsonseFailed();
 
     }
   }
 
 
+
+  const handleRepsonseFailed = async () => {
+    setModalVisible(prev => {
+      return {
+        ...prev,
+        cek: false
+      }
+    })
+    await delay(1000);
+    setModalVisibleFailed(prev => {
+      return {
+        ...prev,
+        cek: true
+      }
+    })
+
+  }
+
+  const handleRepsonseSucces = async () => {
+    setModalVisible(prev => {
+      return {
+        ...prev,
+        cek: false
+      }
+    })
+    await delay(1000);
+    setModalVisibleSucces(prev => {
+      return {
+        ...prev,
+        cek: true
+      }
+    })
+
+  }
+
+  const handleCloseAllStateModal =  async() => {
+    await delay(500);
+    setModalVisible(prev => {
+      return {
+        ...prev,
+        cek: false,
+        message:""
+      }
+    })
+    setModalVisibleSucces(prev => {
+      return {
+        ...prev,
+        cek: false,
+        message: ""
+      }
+    })
+    setModalVisibleFailed(prev => {
+      return {
+        ...prev,
+        cek: false,
+        message: ""
+      }
+    })
+    navigation.navigate("Home")
+  }
+
+  const nominal = Number(removeFormatting(topUpAmount));
   return (
     <View style={styles.container}>
       <View style={{ backgroundColor: '#e74c3c', borderRadius: 10, padding: 18 }}>
         <Text style={styles.balanceText}>Saldo anda</Text>
         <Text style={styles.balanceAmount}>{new Intl.NumberFormat('id-ID', {
-              style: 'currency',
-              currency: 'IDR',
-              minimumFractionDigits: 0,
-              maximumFractionDigits: 0,
-            }).format(balance?.balance || 0)}</Text>
+          style: 'currency',
+          currency: 'IDR',
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0,
+        }).format(balance?.balance || 0)}</Text>
       </View>
 
       <View style={{ marginVertical: 40 }}>
@@ -101,8 +183,11 @@ const TopUpScreen: React.FC= () => {
 
       <TouchableOpacity
         style={styles.topUpButton}
-        disabled={loading}
-        onPress={() => handleTopUp()}
+        disabled={loading || (nominal < 10000)}
+        onPress={() => setModalVisible(prev => ({
+          ...prev,
+          cek: true
+        }))}
       >
         {
           loading ?
@@ -110,6 +195,37 @@ const TopUpScreen: React.FC= () => {
             <Text style={styles.topUpButtonText}>Top Up</Text>
         }
       </TouchableOpacity>
+      <ModalComponent
+        handlePay={() => handleTopUp()}
+        urlImage={require('@assets/logos/Logo.png')}
+        service_name="Anda yakin untuk Top Up sebesar"
+        service_tarif={Number(removeFormatting(topUpAmount))}
+        modalVisible={modalVisible}
+        loading={loading}
+        textButton='Ya, lanjutkan Top Up'
+        setModalVisible={setModalVisible} />
+
+      <ModalComponent
+        isSucces={true}
+        loading={loading}
+        navigation={navigation}
+        urlImage={'https://w7.pngwing.com/pngs/399/483/png-transparent-check-complete-done-green-success-valid-greenline-icon-thumbnail.png'}
+        service_name={`Top Up sebesar`}
+        service_tarif={Number(removeFormatting(topUpAmount))}
+        modalVisible={modalVisibleSucces}
+        handleCloseAllStateModal={() => handleCloseAllStateModal()}
+        setModalVisible={setModalVisibleSucces} />
+
+      <ModalComponent
+        isFailed={true}
+        loading={loading}
+        navigation={navigation}
+        urlImage={'https://cdn-icons-png.flaticon.com/512/6659/6659895.png'}
+        service_name={`Top Up sebesar`}
+        service_tarif={Number(removeFormatting(topUpAmount))}
+        modalVisible={modalVisibleFailed}
+        handleCloseAllStateModal={() => handleCloseAllStateModal()}
+        setModalVisible={setModalVisibleFailed} />
     </View>
   );
 };

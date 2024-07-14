@@ -55,7 +55,7 @@ const PembayaranScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         try {
             const token = await getData();
             setLoading(true);
-            await delay(5000);
+            await delay(3000);
             const response = await fetch(`https://take-home-test-api.nutech-integrasi.app/transaction`, {
                 headers: {
                     "Content-Type": "application/json",
@@ -113,6 +113,32 @@ const PembayaranScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
 
     }
 
+    const handleCloseAllStateModal =  async() => {
+        await delay(500);
+        setModalVisible(prev => {
+          return {
+            ...prev,
+            cek: false,
+            message:""
+          }
+        })
+        setModalVisibleSucces(prev => {
+          return {
+            ...prev,
+            cek: false,
+            message: ""
+          }
+        })
+        setModalVisibleFailed(prev => {
+          return {
+            ...prev,
+            cek: false,
+            message: ""
+          }
+        })
+        navigation.navigate("Home")
+      }
+
     return (
         <View style={styles.container}>
             <View style={{ backgroundColor: '#e74c3c', borderRadius: 10, padding: 18 }}>
@@ -131,7 +157,7 @@ const PembayaranScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
             <FieldWithIcon
                 styleTextInput={{ height: 40 }}
                 placeholder='Masukan nominal Top Up'
-                disabled={true}
+                disabled={false}
                 value={new Intl.NumberFormat('id-ID', {
                     style: 'currency',
                     currency: 'IDR',
@@ -159,10 +185,11 @@ const PembayaranScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
             <ModalComponent
                 handlePay={() => handlePay()}
                 urlImage={require('@assets/logos/Logo.png')}
-                service_name={service_name}
+                service_name={`Beli ${service_name} senilai`}
                 service_tarif={service_tariff}
                 modalVisible={modalVisible}
                 loading={loading}
+                textButton='Ya, lanjutkan bayar'
                 setModalVisible={setModalVisible} />
 
             <ModalComponent
@@ -170,9 +197,11 @@ const PembayaranScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
                 loading={loading}
                 navigation={navigation}
                 urlImage={'https://w7.pngwing.com/pngs/399/483/png-transparent-check-complete-done-green-success-valid-greenline-icon-thumbnail.png'}
-                service_name={service_name}
+                service_name={`Beli ${service_name} senilai`}
                 service_tarif={service_tariff}
                 modalVisible={modalVisibleSucces}
+                textButton='Ya, lanjutkan bayar'
+                handleCloseAllStateModal={() => handleCloseAllStateModal()}
                 setModalVisible={setModalVisibleSucces} />
 
             <ModalComponent
@@ -180,9 +209,11 @@ const PembayaranScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
                 loading={loading}
                 navigation={navigation}
                 urlImage={'https://cdn-icons-png.flaticon.com/512/6659/6659895.png'}
-                service_name={service_name}
+                service_name={`Beli ${service_name} senilai`}
                 service_tarif={service_tariff}
                 modalVisible={modalVisibleFailed}
+                textButton='Ya, lanjutkan bayar'
+                handleCloseAllStateModal={() => handleCloseAllStateModal()}
                 setModalVisible={setModalVisibleFailed} />
         </View>
     );

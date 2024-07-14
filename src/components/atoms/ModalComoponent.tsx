@@ -1,7 +1,6 @@
 import { formatMataUang } from '@helper/func';
 import React from 'react';
 import { Alert, Modal, StyleSheet, Text, Pressable, View, Image } from 'react-native';
-import { ImageProps } from 'react-native-svg';
 
 interface DataVisible {
     cek?: boolean
@@ -11,6 +10,7 @@ interface DataPropsModalComponent {
     modalVisible?: DataVisible
     setModalVisible: (visible: DataVisible) => void
     handlePay?: () => void
+    handleCloseAllStateModal?: () => void
     service_tarif?: number
     service_name?: string
     urlImage?: any
@@ -18,6 +18,7 @@ interface DataPropsModalComponent {
     isFailed?: boolean
     navigation?: any
     loading?: boolean
+    textButton?: string
 }
 
 const ModalComponent: React.FC<DataPropsModalComponent> = (data) => {
@@ -40,7 +41,7 @@ const ModalComponent: React.FC<DataPropsModalComponent> = (data) => {
                             <Image source={data.isSucces || data.isFailed ? { uri: data.urlImage } : data.urlImage}
                                 style={styles.logo} />
                             <View>
-                                <Text style={styles.modalTextDesc}>Beli {data.service_name} senilai</Text>
+                                <Text style={styles.modalTextDesc}>{data.service_name}</Text>
                                 <Text style={styles.modalTextPrice}>{formatMataUang(data.service_tarif || 0)}</Text>
                                 {data.isSucces && <Text style={styles.modalTextSuccess}>berhasil!!!</Text>}
                                 {data.isFailed && <Text style={styles.modalTextSuccess}>gagal</Text>}
@@ -57,7 +58,7 @@ const ModalComponent: React.FC<DataPropsModalComponent> = (data) => {
                                     {
                                         data.loading ?
                                             <Text style={styles.textStyle}>tunggu..</Text> :
-                                            <Text style={styles.textStyle}>Ya, lanjutkan bayar</Text>
+                                            <Text style={styles.textStyle}>{data.textButton}</Text>
 
                                     }
                                 </Pressable>
@@ -80,7 +81,7 @@ const ModalComponent: React.FC<DataPropsModalComponent> = (data) => {
                             </> :
                                 <Pressable
                                     style={[styles.button]}
-                                    onPress={() => data.navigation.navigate('Home')}>
+                                    onPress={data.handleCloseAllStateModal}>
                                     <Text style={styles.textStyle}>Kembali ke beranda</Text>
                                 </Pressable>
                             }
