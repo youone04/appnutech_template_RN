@@ -4,18 +4,24 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image, Alert, ActivityIndicator } from 'react-native';
 import { useAuth } from '@helper/AuthContext/AuthContext';
 import { _storeData } from '@helper/LocalStorage';
+import { validataForm, validateEmail } from '@helper/func';
+import { DataLogin, DataNotif } from "config/Type/type"
+import ModalNotif from '@components/atoms/ModalNotif';
 
-interface DataLogin {
-    email: string;
-    password: string;
-}
+
 const LoginScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     const { login } = useAuth();
+    const [notif, setNotif] = useState<DataNotif>({ notif: false });
     const [dataLogin, setDatalogin] = useState<DataLogin>({
         email: '',
         password: ''
     });
     const [loading, setLoading] = useState<boolean>(false);
+    const [modalVisible, setModalVisible] = useState<object>({
+        cek: false,
+        message: ""
+    });
+
 
     const handleInputChange = (field: keyof DataLogin, text: string) => {
         setDatalogin(prevData => ({
@@ -25,11 +31,22 @@ const LoginScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     };
 
     const handleLogin = () => {
-        const payload: object = {
-            email: dataLogin.email,
-            password: dataLogin.password
-        };
-        postData(payload)
+        const invalidFields = validataForm(dataLogin);
+        if (invalidFields.length > 0) {
+            setNotif({ notif: true });
+        } else if (!validateEmail(dataLogin.email)) {
+            return null
+        } else if (dataLogin.password.length < 8) {
+            return null
+        } else {
+            setNotif({ notif: false });
+            const payload: object = {
+                email: dataLogin.email,
+                password: dataLogin.password
+            };
+            postData(payload)
+        }
+
     };
 
     const postData = async (payload: object) => {
@@ -45,12 +62,12 @@ const LoginScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
 
             const hasilResponse = await response.json();
             if (hasilResponse.status !== 0) {
-                setLoading(false);
-                setDatalogin({
-                    email: "",
-                    password: "",
-                });
-                return  Alert.alert(hasilResponse.message);
+                setModalVisible((prev) => ({
+                    ...prev,
+                    cek: true,
+                    message: hasilResponse.message
+                }));
+                return setLoading(false);
             }
             Alert.alert(hasilResponse.message)
             _storeData(hasilResponse.data.token);
@@ -66,7 +83,7 @@ const LoginScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
 
         }
     }
-
+    const valid = validataForm(dataLogin);
     return (
         <View style={styles.container}>
             <View style={styles.banner}>
@@ -75,15 +92,23 @@ const LoginScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
             </View>
             <Text style={styles.subtitle}>Masuk atau buat akun untuk memulai</Text>
             <FieldWithIcon
+                id='email'
                 placeholder="masukan email anda"
                 iconName={faAt}
                 onChange={(text: string) => handleInputChange('email', text)}
                 value={dataLogin.email}
+                isEmail={true}
+                isNull={notif.notif}
+                validateForm={valid}
             />
             <FieldWithIcon
+                id='password'
                 placeholder="masukan pasword anda"
                 iconName={faLock}
+                isPassword={true}
                 secureTextEntry={true}
+                validateForm={valid}
+                isNull={notif.notif}
                 onChange={(text: string) => handleInputChange('password', text)}
                 value={dataLogin.password}
             />
@@ -98,6 +123,7 @@ const LoginScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
             <Text style={styles.registerText}>
                 belum punya akun? <Text onPress={() => navigation.navigate('Register')} style={styles.registerLink}>registrasi di sini</Text>
             </Text>
+            <ModalNotif modalVisible={modalVisible} setModalVisible={setModalVisible} />
         </View>
     );
 };

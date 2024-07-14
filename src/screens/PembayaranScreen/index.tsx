@@ -3,10 +3,11 @@ import { faCalculator } from '@fortawesome/free-solid-svg-icons';
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image, Alert, ActivityIndicator } from 'react-native';
 import { getDataFetchObj } from '@helper/api/Api';
-import { formatMataUang } from '@helper/func';
+import { delay, formatMataUang } from '@helper/func';
 import { useRoute, RouteProp, useFocusEffect } from '@react-navigation/native';
 import { DataTransaction } from "config/Type/type";
 import { getData } from '@helper/LocalStorage';
+import ModalComponent from '@components/atoms/ModalComoponent';
 
 // Define your route params type
 type RootStackParamList = {
@@ -19,10 +20,23 @@ type RootStackParamList = {
 };
 
 type PembayaranScreenRouteProp = RouteProp<RootStackParamList, 'Pembayaran'>;
-const PembayaranScreen: React.FC<{navigation: any}> = ({navigation}) => {
+const PembayaranScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     const [balance, setBalance] = useState<DataTransaction | null>(null);
     const route = useRoute<PembayaranScreenRouteProp>();
     const [loading, setLoading] = useState<boolean>(false);
+    const [modalVisible, setModalVisible] = useState<object>({
+        cek: false,
+        message: ""
+    });
+    const [modalVisibleSucces, setModalVisibleSucces] = useState<object>({
+        cek: false,
+        message: ""
+    });
+    const [modalVisibleFailed, setModalVisibleFailed] = useState<object>({
+        cek: false,
+        message: ""
+    });
+
     const { service_tariff, service_code, service_icon, service_name } = route.params;
 
     useFocusEffect(
@@ -41,6 +55,7 @@ const PembayaranScreen: React.FC<{navigation: any}> = ({navigation}) => {
         try {
             const token = await getData();
             setLoading(true);
+            await delay(5000);
             const response = await fetch(`https://take-home-test-api.nutech-integrasi.app/transaction`, {
                 headers: {
                     "Content-Type": "application/json",
@@ -52,16 +67,51 @@ const PembayaranScreen: React.FC<{navigation: any}> = ({navigation}) => {
             const hasilResponse = await response.json();
             if (hasilResponse.status !== 0) {
                 setLoading(false);
-                return Alert.alert(hasilResponse.message);
+                handleRepsonseFailed();
+                return null;
             }
-            Alert.alert(hasilResponse.message);
+            handleRepsonseSucces()
             setLoading(false);
-            navigation.navigate('Home');
         } catch (e) {
+            handleRepsonseFailed();
             setLoading(false);
 
         }
     };
+
+    const handleRepsonseFailed = async () => {
+        setModalVisible(prev => {
+            return {
+                ...prev,
+                cek: false
+            }
+        })
+        await delay(1000);
+        setModalVisibleFailed(prev => {
+            return {
+                ...prev,
+                cek: true
+            }
+        })
+
+    }
+
+    const handleRepsonseSucces = async () => {
+        setModalVisible(prev => {
+            return {
+                ...prev,
+                cek: false
+            }
+        })
+        await delay(1000);
+        setModalVisibleSucces(prev => {
+            return {
+                ...prev,
+                cek: true
+            }
+        })
+
+    }
 
     return (
         <View style={styles.container}>
@@ -93,7 +143,10 @@ const PembayaranScreen: React.FC<{navigation: any}> = ({navigation}) => {
 
             <TouchableOpacity
                 style={styles.pembayaranButton}
-                onPress={() => handlePay()}
+                onPress={() => setModalVisible(prev => ({
+                    ...prev,
+                    cek: true
+                }))}
                 disabled={loading}
             >
                 {
@@ -103,6 +156,34 @@ const PembayaranScreen: React.FC<{navigation: any}> = ({navigation}) => {
 
                 }
             </TouchableOpacity>
+            <ModalComponent
+                handlePay={() => handlePay()}
+                urlImage={require('@assets/logos/Logo.png')}
+                service_name={service_name}
+                service_tarif={service_tariff}
+                modalVisible={modalVisible}
+                loading={loading}
+                setModalVisible={setModalVisible} />
+
+            <ModalComponent
+                isSucces={true}
+                loading={loading}
+                navigation={navigation}
+                urlImage={'https://w7.pngwing.com/pngs/399/483/png-transparent-check-complete-done-green-success-valid-greenline-icon-thumbnail.png'}
+                service_name={service_name}
+                service_tarif={service_tariff}
+                modalVisible={modalVisibleSucces}
+                setModalVisible={setModalVisibleSucces} />
+
+            <ModalComponent
+                isFailed={true}
+                loading={loading}
+                navigation={navigation}
+                urlImage={'https://cdn-icons-png.flaticon.com/512/6659/6659895.png'}
+                service_name={service_name}
+                service_tarif={service_tariff}
+                modalVisible={modalVisibleFailed}
+                setModalVisible={setModalVisibleFailed} />
         </View>
     );
 };

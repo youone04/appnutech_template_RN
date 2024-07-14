@@ -1,6 +1,6 @@
-import {DataRegistrasi} from "config/Type/type"
+import {DataRegistrasi, DataLogin} from "config/Type/type"
 
-export const formatMataUang = (data: bigint) => {
+export const formatMataUang = (data: number|bigint) => {
     return new Intl.NumberFormat('id-ID', {
         style: 'currency',
         currency: 'IDR',
@@ -19,10 +19,12 @@ export const removeFormatting = (formattedValue: string) => {
     return formattedValue.replace(/[^0-9]/g, '');
 };
 
-export const validataForm = (data: DataRegistrasi) => {
-    const invalidFields: (keyof DataRegistrasi)[] = [];
+type Data = DataRegistrasi | DataLogin;
+
+export const validataForm = (data: Data) => {
+    const invalidFields: (keyof Data)[] = [];
     Object.keys(data).forEach((item) => {
-        const key = item as keyof DataRegistrasi;
+        const key = item as keyof Data;
         if (!data[key]) {
             invalidFields.push(key);
         }
@@ -34,3 +36,5 @@ export const validateEmail = (email:string) => {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return re.test(email);
 }
+
+export const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));

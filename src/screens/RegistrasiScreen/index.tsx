@@ -2,11 +2,9 @@ import { View, Text, TouchableOpacity, StyleSheet, Image, ActivityIndicator, Ale
 import React, { useState } from 'react';
 import { faAt, faLock, faUser } from '@fortawesome/free-solid-svg-icons';
 import FieldWithIcon from '@components/atoms/FieldWithIcon';
-import { DataRegistrasi } from "config/Type/type"
+import { DataRegistrasi, DataNotif } from "config/Type/type"
 import { validataForm, validateEmail } from '@helper/func';
-interface DataNotif {
-    notif: boolean
-}
+
 
 const RegistrasiScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     const [dataRegistrasi, setDataRegistrasi] = useState<DataRegistrasi>({
@@ -33,6 +31,8 @@ const RegistrasiScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         } else if (dataRegistrasi.password !== dataRegistrasi.konfirmasiPassword) {
             return null;
         } else if (!validateEmail(dataRegistrasi.email)) {
+            return null
+        } else if (dataRegistrasi.password.length < 8) {
             return null
         } else {
             setNotif({ notif: false });

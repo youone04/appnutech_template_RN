@@ -48,3 +48,11 @@ export interface DataRegistrasi {
   password: string;
   konfirmasiPassword: string;
 }
+export interface DataLogin {
+  email: string;
+  password: string;
+}
+
+export interface DataNotif {
+  notif: boolean
+}
