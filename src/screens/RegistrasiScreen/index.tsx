@@ -4,6 +4,8 @@ import { faAt, faLock, faUser } from '@fortawesome/free-solid-svg-icons';
 import FieldWithIcon from '@components/atoms/FieldWithIcon';
 import { DataRegistrasi, DataNotif } from "config/Type/type"
 import { validataForm, validateEmail } from '@helper/func';
+import { DataSecureEntry } from "config/Type/type";
+
 const RegistrasiScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     const [dataRegistrasi, setDataRegistrasi] = useState<DataRegistrasi>({
         email: "",
@@ -14,6 +16,10 @@ const RegistrasiScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     });
     const [notif, setNotif] = useState<DataNotif>({ notif: false });
     const [loading, setLoading] = useState<boolean>(false);
+    const [secureTextEntry, setSecureEntry] = useState<DataSecureEntry>({
+        password: true,
+        konfirmasiPassword: true
+    });
     const handleInputChange = (field: keyof DataRegistrasi, text: string) => {
         setDataRegistrasi(prevData => ({
             ...prevData,
@@ -74,6 +80,23 @@ const RegistrasiScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
             })
         }
     }
+    const handleSecureEntry = (konfirmasiPassword: boolean) => {
+        if (konfirmasiPassword) {
+            setSecureEntry(prev => {
+                return {
+                    ...prev,
+                    konfirmasiPassword: !secureTextEntry.konfirmasiPassword
+                }
+            })
+        } else {
+            setSecureEntry(prev => {
+                return {
+                    ...prev,
+                    password: !secureTextEntry.password
+                }
+            })
+        }
+    }
     const valid = validataForm(dataRegistrasi);
     return (
         <View style={styles.container}>
@@ -118,21 +141,24 @@ const RegistrasiScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
                 isPassword={true}
                 iconName={faLock}
                 value={dataRegistrasi.password}
-                secureTextEntry={true}
+                secureTextEntry={secureTextEntry.password}
                 onChange={(text: string) => handleInputChange('password', text)}
+                handleSecureEntry={handleSecureEntry}
                 validateForm={valid}
                 isNull={notif.notif}
             />
             <FieldWithIcon
                 id='konfirmasiPassword'
+                isPassword={true}
                 placeholder="konfirmasi password"
                 value={dataRegistrasi.konfirmasiPassword}
                 iconName={faLock}
                 valuePassword={dataRegistrasi.password}
-                secureTextEntry={true}
+                secureTextEntry={secureTextEntry.konfirmasiPassword}
                 onChange={(text: string) => handleInputChange('konfirmasiPassword', text)}
                 validateForm={valid}
                 isNull={notif.notif}
+                handleSecureEntry={handleSecureEntry}
                 konfirmasiPW={true}
             />
             <View style={{ width: '100%', marginTop: 25 }}>

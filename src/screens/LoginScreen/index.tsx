@@ -19,6 +19,7 @@ const LoginScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         cek: false,
         message: ""
     });
+    const [secureTextEntry, setSecureEntry] = useState<boolean>(true);
     const handleInputChange = (field: keyof DataLogin, text: string) => {
         setDatalogin(prevData => ({
             ...prevData,
@@ -76,6 +77,10 @@ const LoginScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
 
         }
     }
+
+    const handleSecureEntry = () => {
+            setSecureEntry(prev => !prev)
+    }
     const valid = validataForm(dataLogin);
     return (
         <View style={styles.container}>
@@ -99,9 +104,10 @@ const LoginScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
                 placeholder="masukan pasword anda"
                 iconName={faLock}
                 isPassword={true}
-                secureTextEntry={true}
+                secureTextEntry={secureTextEntry}
                 validateForm={valid}
                 isNull={notif.notif}
+                handleSecureEntry={handleSecureEntry}
                 onChange={(text: string) => handleInputChange('password', text)}
                 value={dataLogin.password}
             />

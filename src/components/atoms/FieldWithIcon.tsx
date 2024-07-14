@@ -1,7 +1,9 @@
 import React from 'react';
-import { View, TextInput, StyleSheet, ViewStyle, TextStyle, KeyboardType, Text, Dimensions } from 'react-native';
+import { View, TextInput, StyleSheet, ViewStyle, TextStyle, KeyboardType, Text, Dimensions, Pressable } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import ShowNotifField from '@components/atoms/ShowNotifField';
+import { faEye } from '@fortawesome/free-solid-svg-icons';
+import {DataSecureEntry} from "config/Type/type";
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 type FieldPropsWithIcon = {
     placeholder?: string;
@@ -22,6 +24,7 @@ type FieldPropsWithIcon = {
     konfirmasiPW?: boolean,
     isPassword?: boolean,
     isEmail?: boolean,
+    handleSecureEntry?: any
 
 }
 const FieldWithIcon: React.FC<FieldPropsWithIcon> = (data) => {
@@ -60,6 +63,17 @@ const FieldWithIcon: React.FC<FieldPropsWithIcon> = (data) => {
                     autoCapitalize='none'
                     id={data.id}
                 />
+                {data.isPassword&&
+                <Pressable onPress={() => data.handleSecureEntry(data.konfirmasiPW)}>
+                    {
+                        data.konfirmasiPW?
+                        <FontAwesomeIcon  icon={faEye} style={[styles.icon, data.secureTextEntry? styles.iconRed:{}]}/>:
+                        <FontAwesomeIcon  icon={faEye} style={[styles.icon, data.secureTextEntry? styles.iconRed:{}]}/>
+
+                    }
+                    
+                </Pressable>
+                 }
             </View>
             <ShowNotifField
                 dataNotValid={dataNotValid}

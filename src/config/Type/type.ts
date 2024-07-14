@@ -53,3 +53,7 @@ export interface DataLogin {
 export interface DataNotif {
   notif: boolean
 }
+export interface DataSecureEntry {
+  password: boolean,
+  konfirmasiPassword: boolean
+}
