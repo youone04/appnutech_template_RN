@@ -1,12 +1,14 @@
-import { getData } from "@helper/LocalStorage";
+import { _storeData, getData } from "@helper/LocalStorage";
 import { Alert } from "react-native";
 import {
     DataBanner, DataService, DataTransaction,
     DataHistoryTransaction, DataRecord,
-    DataProfile
+    DataProfile,
+    DataModalVisible
 } from "config/Type/type";
+import React from "react";
 type DataType = DataBanner | DataService | DataTransaction |
-    DataHistoryTransaction | DataRecord | DataProfile;
+    DataHistoryTransaction | DataRecord | DataProfile | DataModalVisible;
 export async function getDataFetchArray<T extends DataType>(
     setData: React.Dispatch<React.SetStateAction<T[] | null>>,
     url: string
@@ -34,7 +36,6 @@ export async function getDataFetchObj<T extends DataType>(
     setData: React.Dispatch<React.SetStateAction<T | null>>,
     url: string
 ): Promise<object | any> {
-    // const {logout} = useAuth();
     try {
         const token = await getData();
         const response = await fetch(`https://take-home-test-api.nutech-integrasi.app/${url}`, {
@@ -87,5 +88,40 @@ export async function getDataFetchObjWithPagination<T extends DataType>(
     } catch (e) {
         console.log(e);
         Alert.alert("Terjadi kesalahan, coba beberapa saat lagi")
+    }
+}
+
+export async function postData<T extends DataType>(
+    setLoading: React.Dispatch<React.SetStateAction<boolean>>,
+    setModalVisible: React.Dispatch<React.SetStateAction<T>>,
+    payload?: object,
+    url?: string,
+    login?: () => void
+) {
+    try {
+        setLoading(true);
+        const response = await fetch(`https://take-home-test-api.nutech-integrasi.app/${url}`, {
+            headers: {
+                "Content-Type": "application/json",
+            },
+            method: 'POST',
+            body: JSON.stringify(payload)
+        });
+        const hasilResponse = await response.json();
+        setLoading(false);
+        if (hasilResponse.status !== 0) {
+            setModalVisible((prev) => ({
+                ...prev,
+                cek: true,
+                message: hasilResponse.message
+            }));
+        } else {
+            Alert.alert(hasilResponse.message)
+            _storeData(hasilResponse.data.token);
+            login;
+        }
+
+    } catch (e) {
+        setLoading(false);
     }
 }

@@ -60,13 +60,12 @@ const PembayaranScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
                 body: JSON.stringify({ service_code })
             });
             const hasilResponse = await response.json();
+            setLoading(false);
             if (hasilResponse.status !== 0) {
-                setLoading(false);
                 handleRepsonseFailed();
                 return null;
             }
             handleRepsonseSucces()
-            setLoading(false);
         } catch (e) {
             handleRepsonseFailed();
             setLoading(false);

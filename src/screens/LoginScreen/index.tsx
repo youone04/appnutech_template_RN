@@ -1,12 +1,13 @@
 import FieldWithIcon from '@components/atoms/FieldWithIcon';
 import { faAt, faLock } from '@fortawesome/free-solid-svg-icons';
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image, ActivityIndicator } from 'react-native';
 import { useAuth } from '@helper/AuthContext/AuthContext';
 import { _storeData } from '@helper/LocalStorage';
 import { validataForm, validateEmail } from '@helper/func';
 import { DataLogin, DataNotif } from "config/Type/type"
 import ModalNotif from '@components/atoms/ModalNotif';
+import { postData } from '@helper/api/Api';
 const LoginScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     const { login } = useAuth();
     const [notif, setNotif] = useState<DataNotif>({ notif: false });
@@ -26,7 +27,7 @@ const LoginScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
             [field]: text
         }));
     };
-    const handleLogin = () => {
+    const handleLogin = async () => {
         const invalidFields = validataForm(dataLogin);
         if (invalidFields.length > 0) {
             setNotif({ notif: true });
@@ -40,46 +41,11 @@ const LoginScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
                 email: dataLogin.email,
                 password: dataLogin.password
             };
-            postData(payload)
+            await postData(setLoading, setModalVisible, payload, "login", login);
         }
-
     };
-    const postData = async (payload: object) => {
-        try {
-            setLoading(true);
-            const response = await fetch(`https://take-home-test-api.nutech-integrasi.app/login`, {
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                method: 'POST',
-                body: JSON.stringify(payload)
-            });
-            const hasilResponse = await response.json();
-            if (hasilResponse.status !== 0) {
-                setModalVisible((prev) => ({
-                    ...prev,
-                    cek: true,
-                    message: hasilResponse.message
-                }));
-                return setLoading(false);
-            }
-            Alert.alert(hasilResponse.message)
-            _storeData(hasilResponse.data.token);
-            login();
-            setLoading(false);
-
-        } catch (e) {
-            setLoading(false);
-            setDatalogin({
-                email: "",
-                password: "",
-            })
-
-        }
-    }
-
     const handleSecureEntry = () => {
-            setSecureEntry(prev => !prev)
+        setSecureEntry(prev => !prev)
     }
     const valid = validataForm(dataLogin);
     return (

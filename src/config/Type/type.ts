@@ -57,3 +57,7 @@ export interface DataSecureEntry {
   password: boolean,
   konfirmasiPassword: boolean
 }
+export interface DataModalVisible {
+  cel: boolean,
+  message: string
+}
