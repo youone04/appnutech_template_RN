@@ -51,6 +51,7 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         {/* Header */}
         <HeaderCcmponent
           profile_image={dataProfile?.profile_image}
+          navigation={navigation}
         />
         {/* Welcome Message */}
         <WelcomeMessageComponent

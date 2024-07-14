@@ -33,6 +33,7 @@ export interface DataProfile {
   uploadImage?: void,
   cekPhoto?: string | null,
   handleChoosePhoto?: any,
+  navigation?: any
 }
 
 export interface FieldProfile {

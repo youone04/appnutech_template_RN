@@ -1,5 +1,5 @@
 import { DataProfile } from "config/Type/type";
-import { View, Image, Text, StyleSheet } from "react-native";
+import { View, Image, Text, StyleSheet, TouchableOpacity } from "react-native";
 
 const HeaderCcmponent: React.FC<DataProfile> = (item) => {
     return(
@@ -8,7 +8,9 @@ const HeaderCcmponent: React.FC<DataProfile> = (item) => {
           <Image source={require('@assets/logos/Logo.png')} style={styles.logo} />
           <Text style={{ marginLeft: 8 }}>SIMS PPOB</Text>
         </View>
-        <Image source={{ uri: item?.profile_image }} style={styles.userIcon} />
+       <TouchableOpacity onPress={() => item.navigation.navigate("Profile")}>
+       <Image source={{ uri: item?.profile_image }} style={styles.userIcon} />
+       </TouchableOpacity>
       </View>
     )
 }
