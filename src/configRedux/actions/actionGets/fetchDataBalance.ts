@@ -1,15 +1,14 @@
 import { getData } from '@helper/LocalStorage';
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import {
-    DataBanner, DataService, DataTransaction,
-    DataHistoryTransaction, DataRecord,
-    DataProfile,
-    DataModalVisible
-} from "config/Type/type";
-type DataType = DataBanner | DataService | DataTransaction |
-    DataHistoryTransaction | DataRecord | DataProfile | DataModalVisible;
 
-
+interface DataBalance {
+    data: Data; 
+    message: string;
+    status: 0;
+}
+interface Data{
+    balance: number
+}
 
 // Fetch data from API
 export const fetchDataBalance = createAsyncThunk(
@@ -23,13 +22,12 @@ export const fetchDataBalance = createAsyncThunk(
                     "Content-Type": "application/json",
                     'Authorization': `Bearer ${token}`
                 },
-
             });
             if (!response.ok) {
                 throw new Error('Failed to fetch data');
             }
-            const dataResponse = await response.json();
-            return dataResponse.data.balance;
+            const dataResponse:DataBalance = await response.json();
+            return dataResponse.data;
         } catch (error) {
             return rejectWithValue('Failed to fetch data');
         }

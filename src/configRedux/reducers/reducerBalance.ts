@@ -2,29 +2,12 @@
 import { fetchDataBalance } from '@configRedux/actions/actionGets/fetchDataBalance';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import {
-    DataBanner, DataService, DataTransaction,
-    DataHistoryTransaction, DataRecord,
-    DataProfile,
-    DataModalVisible
+    DataTransaction,
+
 } from "config/Type/type";
 
-  
-  interface LoginResponse {
-    token: string;
-    user: {
-      id: number;
-      email: string;
-    };
-  }
-  
-  interface DataState {
-    loading: boolean;
-    error: string | null;
-    token: string | null;
-    login: boolean
-  }
-  
-  const initialState: any = {
+
+  const initialState: DataTransaction = {
     loading: false,
     error: null,
     token: null,
@@ -42,10 +25,9 @@ const dataSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(fetchDataBalance.fulfilled, (state, action: PayloadAction<any>) => {
-        console.log("okeyyy")
+      .addCase(fetchDataBalance.fulfilled, (state, action: PayloadAction<DataTransaction>) => {
         state.loading = false;
-        state.balance = action.payload;
+        state.balance = action.payload.balance;
       })
       .addCase(fetchDataBalance.rejected, (state, action) => {
         state.loading = false;

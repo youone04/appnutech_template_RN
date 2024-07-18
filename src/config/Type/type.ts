@@ -11,7 +11,10 @@ export interface DataService {
 }
 
 export interface DataTransaction {
-  balance: any
+  loading?: boolean;
+  error?: any;
+  token?: string | null;
+  balance?: number
 }
 export interface DataRecord {
   invoice_number?: string,
