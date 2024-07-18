@@ -1,21 +1,28 @@
 import FieldWithIcon from '@components/atoms/FieldWithIcon';
 import { faAt, faLock } from '@fortawesome/free-solid-svg-icons';
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image, ActivityIndicator } from 'react-native';
-import { useAuth } from '@helper/AuthContext/AuthContext';
+import { View, Text, TouchableOpacity, StyleSheet, Image, ActivityIndicator, Alert } from 'react-native';
+// import { useAuth } from '@helper/AuthContext/AuthContext';
 import { _storeData } from '@helper/LocalStorage';
 import { validataForm, validateEmail } from '@helper/func';
 import { DataLogin, DataNotif } from "config/Type/type"
 import ModalNotif from '@components/atoms/ModalNotif';
-import { postData } from '@helper/api/Api';
+// import { postData } from '@helper/api/Api';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState, AppDispatch } from '@configRedux/store/store';
+import { postData } from '@configRedux/actions/actionPosts/postLogin';
+import { login } from '@configRedux/reducers/auth/reducerAuth';
 const LoginScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
-    const { login } = useAuth();
+    // const { login } = useAuth();
+    const { loading, error, token } = useSelector((state: RootState) => state.dataLogin);
+    const dispatch: AppDispatch = useDispatch();
+
     const [notif, setNotif] = useState<DataNotif>({ notif: false });
     const [dataLogin, setDatalogin] = useState<DataLogin>({
         email: '',
         password: ''
     });
-    const [loading, setLoading] = useState<boolean>(false);
+    // const [loading, setLoading] = useState<boolean>(false);
     const [modalVisible, setModalVisible] = useState<object>({
         cek: false,
         message: ""
@@ -37,11 +44,18 @@ const LoginScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
             return null
         } else {
             setNotif({ notif: false });
-            const payload: object = {
-                email: dataLogin.email,
-                password: dataLogin.password
-            };
-            await postData(setLoading, setModalVisible, payload, "login", login);
+            // await postData(setLoading, setModalVisible, payload, "login", login);
+            const payload = { email: dataLogin.email, password: dataLogin.password, url: "login" };
+            const resultAction = await dispatch(postData(payload));
+            if (postData.rejected.match(resultAction)) {
+                setModalVisible({
+                    cek: true,
+                    message: resultAction.payload as string,
+                });
+            } else {
+                dispatch(login());
+            }
+
         }
     };
     const handleSecureEntry = () => {

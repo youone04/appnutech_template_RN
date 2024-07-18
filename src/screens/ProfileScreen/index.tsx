@@ -5,12 +5,17 @@ import { getDataFetchObj } from "@helper/api/Api";
 import React, {useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity,Alert, ActivityIndicator } from 'react-native';
 import { DataProfile, FieldProfile } from "config/Type/type";
-import { useAuth } from "@helper/AuthContext/AuthContext";
+// import { useAuth } from "@helper/AuthContext/AuthContext";
 import { getData } from "@helper/LocalStorage";
 import { useFocusEffect } from "@react-navigation/native";
 import { launchImageLibrary } from 'react-native-image-picker';
+import { logout } from "@configRedux/reducers/auth/reducerAuth";
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState, AppDispatch } from '@configRedux/store/store';
+
 const ProfileScreen: React.FC = () => {
-    const {logout} = useAuth()
+    // const {logout} = useAuth()
+    const dispatch: AppDispatch = useDispatch();
     const [dataProfile, setDataProfile] = useState<DataProfile | null>(null);
     const [hanldeEdit, setHandleEdit] = useState<boolean>(false);
     const [fieldProfile, setFieldProfile] = useState<FieldProfile>({
@@ -174,7 +179,7 @@ const ProfileScreen: React.FC = () => {
                                     </TouchableOpacity>
                                 </View>
                                 <View style={{ alignItems: 'center' }}>
-                                    <TouchableOpacity onPress={logout} style={styles.button}>
+                                    <TouchableOpacity onPress={() => dispatch(logout())} style={styles.button}>
                                         <Text style={styles.buttonText}>Logout</Text>
                                     </TouchableOpacity>
                                 </View>

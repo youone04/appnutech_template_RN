@@ -11,6 +11,12 @@ import { DataBanner, DataService, DataTransaction, DataProfile } from "config/Ty
 import { faEye } from '@fortawesome/free-solid-svg-icons';
 import HeaderCcmponent from '@components/atoms/HeaderComponent';
 import WelcomeMessageComponent from '@components/atoms/WelcomeMessageComponent';
+import { fetchDataBalance } from '@configRedux/actions/actionGets/fetchDataBalance';
+import { RootState, AppDispatch } from '@configRedux/store/store';
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchDataService } from '@configRedux/actions/actionGets/fetchService';
+import { _removeData } from '@helper/LocalStorage';
+
 const { width: screenWidth } = Dimensions.get('window');
 const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   const [dataBanner, setBanner] = useState<DataBanner[] | null>(null);
@@ -18,29 +24,36 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   const [dataTransaction, setDataTransaction] = useState<DataTransaction | null>(null);
   const [dataProfile, setDataProfile] = useState<DataProfile | null>(null);
   const [isValueVisible, setVisible] = useState<boolean>(true);
-  useEffect(() => {
-    fetchData();
-  }, []);
+  const {balance, loading, error } = useSelector((state: RootState) => state.dataBalance);
+  const {services} = useSelector((state: RootState) => state.dataService);
+  const dispatch: AppDispatch = useDispatch();
 
-  useFocusEffect(
-    React.useCallback(() => {
-      const updateEndpoint = async () => {
-        await getDataFetchObj(setDataTransaction, "balance");
-        await getDataFetchObj(setDataProfile, "profile");
-      };
-      updateEndpoint();
-      return () => {
+  // useFocusEffect(
+  //   React.useCallback(() => {
+  //     // const updateEndpoint = async () => {
+  //     //   await getDataFetchObj(setDataTransaction, "balance");
+  //     //   await getDataFetchObj(setDataProfile, "profile");
+  //     // };
+  //     // updateEndpoint();
+  //     dispatch(fetchDataBalance("balance"));
+  //     dispatch(fetchDataService("services"));
+  //     // _removeData()
+  //   }, [dispatch])
+  // );
 
-      };
-    }, [])
-  );
-  const fetchData = async () => {
-    await Promise.all(
-      [
-        getDataFetchArray(setBanner, "banner"),
-        getDataFetchArray(setDataService, "services"),
-      ])
-  };
+  useEffect(() =>{
+    dispatch(fetchDataBalance("balance"));
+    dispatch(fetchDataService("services"));
+  },[dispatch])
+
+  // const fetchData = async () => {
+  //   await Promise.all(
+  //     [
+  //       getDataFetchArray(setBanner, "banner"),
+  //       getDataFetchArray(setDataService, "services"),
+  //     ])
+  // };
+
   return (
     <View style={styles.container}>
       <ScrollView>
@@ -63,7 +76,7 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
                 currency: 'IDR',
                 minimumFractionDigits: 0,
                 maximumFractionDigits: 0,
-              }).format(dataTransaction?.balance || 0)
+              }).format(balance || 0)
               }
             </Text> :
               <View style={{ flexDirection: 'row', marginVertical: 20 }}>
@@ -85,7 +98,7 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
 
         {/* Services Grid */}
         <View style={styles.servicesGrid}>
-          {dataService?.slice(0, 9).map((service, index) => (
+          {services?.slice(0,9).map((service:any, index:number) => (
             <TouchableOpacity onPress={() => navigation.navigate('Pembayaran', service)}>
               <View key={index} style={styles.serviceItem}>
                 <Image source={{ uri: service.service_icon }} style={styles.serviceIcon} />
