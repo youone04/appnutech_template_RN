@@ -4,12 +4,16 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
 import { delay, formatNumber, removeFormatting } from '@helper/func';
 import { _storeData, getData } from '@helper/LocalStorage';
-import { DataTransaction } from "config/Type/type";
-import { getDataFetchObj } from '@helper/api/Api';
 import ModalComponent from '@components/atoms/ModalComoponent';
 import { useFocusEffect } from '@react-navigation/native';
+import { useSelector } from 'react-redux';
+import { RootState } from '@configRedux/store/store';
+import Loading from '@components/atoms/Loading';
+import ErrorComponent from '@components/atoms/ErrorComponent';
+
 const TopUpScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
-  const [balance, setBalance] = useState<DataTransaction | null>(null);
+  const { balance, loading: loadingBalance, error: errorBalance } = useSelector((state: RootState) => state.dataBalance);
+
   const [topUpAmount, setTopUpAmount] = useState<string>('0');
   const [loading, setLoading] = useState<boolean>(false);
   const [modalVisible, setModalVisible] = useState<object>({
@@ -26,15 +30,12 @@ const TopUpScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   });
   useFocusEffect(
     React.useCallback(() => {
-      fetchData();
         return () => {
           setTopUpAmount('0');
         };
     }, [])
 );
-  const fetchData = async () => {
-    await getDataFetchObj(setBalance, "balance")
-  };
+ 
   const handleInputChange = (text: string) => {
     const numericValue = text.replace(/[^0-9]/g, '');
     setTopUpAmount(`Rp${formatNumber(numericValue)}`);
@@ -61,7 +62,6 @@ const TopUpScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         setLoading(false);
         handleRepsonseFailed();
       }
-      fetchData();
       setLoading(false);
       handleRepsonseSucces()
     } catch (e) {
@@ -125,6 +125,14 @@ const TopUpScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     navigation.navigate("Home")
   }
   const nominal = Number(removeFormatting(topUpAmount));
+
+  if(errorBalance){
+    <ErrorComponent errorMessage={errorBalance}/>
+  }
+
+  if(loadingBalance){
+    <Loading/>
+  }
   return (
     <View style={styles.container}>
       <View style={{ backgroundColor: '#e74c3c', borderRadius: 10, padding: 18 }}>
@@ -134,7 +142,7 @@ const TopUpScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
           currency: 'IDR',
           minimumFractionDigits: 0,
           maximumFractionDigits: 0,
-        }).format(balance?.balance || 0)}</Text>
+        }).format(balance || 0)}</Text>
       </View>
       <View style={{ marginVertical: 40 }}>
         <Text style={styles.promptText}>Silahkan masukan</Text>

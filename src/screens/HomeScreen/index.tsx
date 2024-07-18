@@ -12,13 +12,13 @@ import HeaderCcmponent from '@components/atoms/HeaderComponent';
 import WelcomeMessageComponent from '@components/atoms/WelcomeMessageComponent';
 import { fetchDataBalance } from '@configRedux/actions/actionGets/fetchDataBalance';
 import { RootState, AppDispatch } from '@configRedux/store/store';
-import { useSelector, useDispatch } from 'react-redux';
 import { fetchDataService } from '@configRedux/actions/actionGets/fetchService';
 import { _removeData } from '@helper/LocalStorage';
 import { fetchDataBanner } from '@configRedux/actions/actionGets/fetchDataBanner';
 import Loading from '@components/atoms/Loading';
 import ErrorComponent from '@components/atoms/ErrorComponent';
 import { fetchDataProfile } from '@configRedux/actions/actionGets/fetchDataProfile';
+import { useSelector, useDispatch } from 'react-redux';
 
 
 const { width: screenWidth } = Dimensions.get('window');

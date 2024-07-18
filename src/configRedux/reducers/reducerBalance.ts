@@ -3,17 +3,13 @@ import { fetchDataBalance } from '@configRedux/actions/actionGets/fetchDataBalan
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import {
     DataTransaction,
-
 } from "config/Type/type";
-
-
   const initialState: DataTransaction = {
     loading: false,
     error: null,
     token: null,
     balance: 0
   };
-
 const dataSlice = createSlice({
     name: 'data',
     initialState,

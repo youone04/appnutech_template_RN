@@ -2,13 +2,19 @@ import CardTransaksi from '@components/CardMod/CardTransaksi';
 import React, { useState } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { View, Text, TouchableOpacity, StyleSheet, FlatList, ActivityIndicator } from 'react-native';
-import { DataTransaction, DataRecord } from "config/Type/type";
-import { getDataFetchObj, getDataFetchObjWithPagination } from '@helper/api/Api';
+import { DataRecord } from "config/Type/type";
+import {getDataFetchObjWithPagination } from '@helper/api/Api';
+import { useSelector } from 'react-redux';
+import { RootState } from '@configRedux/store/store';
+import Loading from '@components/atoms/Loading';
+import ErrorComponent from '@components/atoms/ErrorComponent';
+
 const TransactionScreen: React.FC = () => {
-    const [balance, setBalance] = useState<DataTransaction | null>(null);
+    const { balance, loading: loadingBalance, error: errorBalance } = useSelector((state: RootState) => state.dataBalance);
     const [DataHistoriTransaction, setHistoruTransaction] = useState<DataRecord[]>([])
     const [offset, setOffset] = useState<number>(0);
     const [loading, setLoading] = useState<boolean>(false);
+
     useFocusEffect(
         React.useCallback(() => {
           fetchData();
@@ -18,7 +24,6 @@ const TransactionScreen: React.FC = () => {
       );
     const fetchData = async () => {
         await Promise.all([
-            getDataFetchObj(setBalance, "balance"),
             getDataFetchObjWithPagination(setHistoruTransaction, `transaction/history?offset=${offset}&limit=${5}`, offset)
         ]);
     }
@@ -30,6 +35,14 @@ const TransactionScreen: React.FC = () => {
             setLoading(false);
         }, 3000)
     }
+
+    if(errorBalance){
+        <ErrorComponent errorMessage={errorBalance} />
+    }
+
+    if(loadingBalance){
+        <Loading/>
+    }
     return (
         <View style={styles.container}>
             <View style={{ backgroundColor: '#e74c3c', borderRadius: 10, padding: 18 }}>
@@ -39,7 +52,7 @@ const TransactionScreen: React.FC = () => {
                     currency: 'IDR',
                     minimumFractionDigits: 0,
                     maximumFractionDigits: 0,
-                }).format(balance?.balance || 0)}</Text>
+                }).format(balance || 0)}</Text>
             </View>
             <View style={{ marginVertical: 25 }}>
                 <Text style={styles.promptText}>Transaksi</Text>

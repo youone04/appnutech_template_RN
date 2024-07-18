@@ -8,7 +8,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoginScreen from '@screens/LoginScreen';
 import HomeScreen from '@screens/HomeScreen';
 import RegistrasiScreen from '@screens/RegistrasiScreen';
-import TopUpScreen from '@screens/TopUp';
+import TopUpScreen from '@screens/TopUpScreen';
 import PembayaranScreen from '@screens/PembayaranScreen';
 import TransactionScreen from '@screens/TransactionScreen';
 import ProfileScreen from '@screens/ProfileScreen';
