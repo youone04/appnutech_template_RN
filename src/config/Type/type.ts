@@ -65,3 +65,17 @@ export interface DataModalVisible {
   cel: boolean,
   message: string
 }
+
+export interface ResponseService {
+  message: string;
+  status: number;
+  loading: boolean;
+  error: string | null;
+  data: Data
+}
+export interface Data {
+  service_code: string;
+  service_icon: string;
+  service_name: string;
+  service_tariff: number
+}

@@ -20,11 +20,9 @@ import { _removeData } from '@helper/LocalStorage';
 const { width: screenWidth } = Dimensions.get('window');
 const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   const [dataBanner, setBanner] = useState<DataBanner[] | null>(null);
-  const [dataService, setDataService] = useState<DataService[] | null>(null);
-  const [dataTransaction, setDataTransaction] = useState<DataTransaction | null>(null);
   const [dataProfile, setDataProfile] = useState<DataProfile | null>(null);
   const [isValueVisible, setVisible] = useState<boolean>(true);
-  const {balance, loading, error } = useSelector((state: RootState) => state.dataBalance);
+  const {balance, loading:loadingBalance, error:errorBalance } = useSelector((state: RootState) => state.dataBalance);
   const {services} = useSelector((state: RootState) => state.dataService);
   const dispatch: AppDispatch = useDispatch();
 

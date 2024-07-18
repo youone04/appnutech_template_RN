@@ -1,23 +1,15 @@
 
 import { fetchDataService } from '@configRedux/actions/actionGets/fetchService';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import {ResponseService} from "config/Type/type"
+
+interface DataStateService{
+  loading: boolean;
+  error: any;
+  services: any
+} 
   
-  interface LoginResponse {
-    token: string;
-    user: {
-      id: number;
-      email: string;
-    };
-  }
-  
-  interface DataState {
-    loading: boolean;
-    error: string | null;
-    token: string | null;
-    login: boolean
-  }
-  
-  const initialState: any = {
+  const initialState: DataStateService = {
     loading: false,
     error: null,
     services: []
@@ -34,7 +26,7 @@ const dataSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(fetchDataService.fulfilled, (state, action: PayloadAction<any>) => {
+      .addCase(fetchDataService.fulfilled, (state, action: PayloadAction<ResponseService>) => {
         state.loading = false;
         state.services = action.payload.data;
       })

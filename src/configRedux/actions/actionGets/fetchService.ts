@@ -1,6 +1,8 @@
 import { getData } from '@helper/LocalStorage';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 // Fetch data from API
+import {ResponseService} from "config/Type/type"
+
 export const fetchDataService = createAsyncThunk(
     'service/fetchData',
     async (url:string, { rejectWithValue }) => {
@@ -16,7 +18,7 @@ export const fetchDataService = createAsyncThunk(
             if (!response.ok) {
                 throw new Error('Failed to fetch data');
             }
-            const data: any = await response.json();
+            const data: ResponseService = await response.json();
             return data;
         } catch (error) {
             return rejectWithValue('Failed to fetch data');
