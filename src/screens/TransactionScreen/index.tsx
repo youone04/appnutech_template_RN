@@ -37,7 +37,7 @@ const TransactionScreen: React.FC = () => {
     }
 
     if(errorBalance){
-        <ErrorComponent errorMessage={errorBalance} />
+        <ErrorComponent error={errorBalance} />
     }
 
     if(loadingBalance){

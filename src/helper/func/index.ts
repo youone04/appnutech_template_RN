@@ -1,5 +1,5 @@
 import {DataRegistrasi, DataLogin} from "config/Type/type"
-export const formatMataUang = (data: number|bigint) => {
+export const formatMataUang = (data: number|bigint|undefined) => {
     return new Intl.NumberFormat('id-ID', {
         style: 'currency',
         currency: 'IDR',

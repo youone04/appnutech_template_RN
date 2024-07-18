@@ -3,19 +3,22 @@ import { faCalculator } from '@fortawesome/free-solid-svg-icons';
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
 import { delay, formatNumber, removeFormatting } from '@helper/func';
-import { _storeData, getData } from '@helper/LocalStorage';
 import ModalComponent from '@components/atoms/ModalComoponent';
 import { useFocusEffect } from '@react-navigation/native';
-import { useSelector } from 'react-redux';
-import { RootState } from '@configRedux/store/store';
-import Loading from '@components/atoms/Loading';
 import ErrorComponent from '@components/atoms/ErrorComponent';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState, AppDispatch } from '@configRedux/store/store';
+import { postDataTopUp } from '@configRedux/actions/actionPosts/postTopUp';
+import Loading from '@components/atoms/Loading';
 
 const TopUpScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
-  const { balance, loading: loadingBalance, error: errorBalance } = useSelector((state: RootState) => state.dataBalance);
+  const dispatch: AppDispatch = useDispatch();
+  const { balance, loading, error } = useSelector((state: RootState) => state.dataBalance);
+  const { loading: loadingBalance, error: errorBalance } = useSelector((state: RootState) => state.dataTopUp);
+  const [loadingButton , setLoading] = useState<boolean>(false);
+
 
   const [topUpAmount, setTopUpAmount] = useState<string>('0');
-  const [loading, setLoading] = useState<boolean>(false);
   const [modalVisible, setModalVisible] = useState<object>({
     cek: false,
     message: ""
@@ -30,12 +33,12 @@ const TopUpScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   });
   useFocusEffect(
     React.useCallback(() => {
-        return () => {
-          setTopUpAmount('0');
-        };
+      return () => {
+        setTopUpAmount('0');
+      };
     }, [])
-);
- 
+  );
+
   const handleInputChange = (text: string) => {
     const numericValue = text.replace(/[^0-9]/g, '');
     setTopUpAmount(`Rp${formatNumber(numericValue)}`);
@@ -45,29 +48,15 @@ const TopUpScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   };
   const handleTopUp = async () => {
     const nominal = removeFormatting(topUpAmount);
-    try {
-      const token = await getData();
-      setLoading(true);
-      await delay(3000);
-      const response = await fetch(`https://take-home-test-api.nutech-integrasi.app/topup`, {
-        headers: {
-          "Content-Type": "application/json",
-          'Authorization': `Bearer ${token}`
-        },
-        method: 'POST',
-        body: JSON.stringify({ top_up_amount: nominal })
-      });
-      const hasilResponse = await response.json();
-      if (hasilResponse.status !== 0) {
-        setLoading(false);
-        handleRepsonseFailed();
-      }
-      setLoading(false);
-      handleRepsonseSucces()
-    } catch (e) {
-      setLoading(false);
-      handleRepsonseFailed();
+    const payload = { top_up_amount: Number(nominal), url: "topup" }
+    setLoading(true);
+    await delay(3000);
+    const resultAction = await dispatch(postDataTopUp(payload));
+    if (postDataTopUp.rejected.match(resultAction)) {
+      return handleRepsonseFailed();
     }
+    setLoading(false);
+    handleRepsonseSucces()
   }
   const handleRepsonseFailed = async () => {
     setModalVisible(prev => {
@@ -99,13 +88,13 @@ const TopUpScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
       }
     })
   }
-  const handleCloseAllStateModal =  async() => {
+  const handleCloseAllStateModal = async () => {
     await delay(500);
     setModalVisible(prev => {
       return {
         ...prev,
         cek: false,
-        message:""
+        message: ""
       }
     })
     setModalVisibleSucces(prev => {
@@ -126,13 +115,15 @@ const TopUpScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   }
   const nominal = Number(removeFormatting(topUpAmount));
 
-  if(errorBalance){
-    <ErrorComponent errorMessage={errorBalance}/>
+  if (errorBalance || error) {
+    <ErrorComponent errorMessage={errorBalance || error} />
   }
 
-  if(loadingBalance){
+  if(loading){
     <Loading/>
   }
+
+
   return (
     <View style={styles.container}>
       <View style={{ backgroundColor: '#e74c3c', borderRadius: 10, padding: 18 }}>
@@ -171,14 +162,14 @@ const TopUpScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
       </View>
       <TouchableOpacity
         style={styles.topUpButton}
-        disabled={loading || (nominal < 10000)}
+        disabled={loadingButton || loadingBalance || (nominal < 10000)}
         onPress={() => setModalVisible(prev => ({
           ...prev,
           cek: true
         }))}
       >
         {
-          loading ?
+          loadingButton || loadingBalance ?
             <ActivityIndicator /> :
             <Text style={styles.topUpButtonText}>Top Up</Text>
         }
@@ -189,12 +180,12 @@ const TopUpScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         service_name="Anda yakin untuk Top Up sebesar"
         service_tarif={Number(removeFormatting(topUpAmount))}
         modalVisible={modalVisible}
-        loading={loading}
+        loading={loadingButton || loadingBalance}
         textButton='Ya, lanjutkan Top Up'
         setModalVisible={setModalVisible} />
       <ModalComponent
         isSucces={true}
-        loading={loading}
+        loading={loadingButton || loadingBalance}
         navigation={navigation}
         urlImage={'https://w7.pngwing.com/pngs/399/483/png-transparent-check-complete-done-green-success-valid-greenline-icon-thumbnail.png'}
         service_name={`Top Up sebesar`}
@@ -204,7 +195,7 @@ const TopUpScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         setModalVisible={setModalVisibleSucces} />
       <ModalComponent
         isFailed={true}
-        loading={loading}
+        loading={loadingBalance || loadingBalance}
         navigation={navigation}
         urlImage={'https://cdn-icons-png.flaticon.com/512/6659/6659895.png'}
         service_name={`Top Up sebesar`}

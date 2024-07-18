@@ -8,7 +8,6 @@ import { useRoute, RouteProp, useFocusEffect } from '@react-navigation/native';
 import { DataTransaction } from "config/Type/type";
 import { getData } from '@helper/LocalStorage';
 import ModalComponent from '@components/atoms/ModalComoponent';
-// Define your route params type
 type RootStackParamList = {
     Pembayaran: {
         service_code: string,

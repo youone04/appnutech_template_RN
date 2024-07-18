@@ -7,14 +7,13 @@ import { _storeData } from '@helper/LocalStorage';
 import { validataForm, validateEmail } from '@helper/func';
 import { DataLogin, DataNotif } from "config/Type/type"
 import ModalNotif from '@components/atoms/ModalNotif';
-// import { postData } from '@helper/api/Api';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from '@configRedux/store/store';
 import { postData } from '@configRedux/actions/actionPosts/postLogin';
 import { login } from '@configRedux/reducers/auth/reducerAuth';
+
 const LoginScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
-    // const { login } = useAuth();
-    const { loading, error, token } = useSelector((state: RootState) => state.dataLogin);
+    const { loading } = useSelector((state: RootState) => state.dataLogin);
     const dispatch: AppDispatch = useDispatch();
 
     const [notif, setNotif] = useState<DataNotif>({ notif: false });
@@ -22,7 +21,6 @@ const LoginScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         email: '',
         password: ''
     });
-    // const [loading, setLoading] = useState<boolean>(false);
     const [modalVisible, setModalVisible] = useState<object>({
         cek: false,
         message: ""
