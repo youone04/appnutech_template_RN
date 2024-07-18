@@ -27,8 +27,9 @@ const dataSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchDataService.fulfilled, (state, action: PayloadAction<ResponseService>) => {
-        state.loading = false;
         state.services = action.payload.data;
+        state.loading = false;
+
       })
       .addCase(fetchDataService.rejected, (state, action) => {
         state.loading = false;

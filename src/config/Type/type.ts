@@ -71,11 +71,21 @@ export interface ResponseService {
   status: number;
   loading: boolean;
   error: string | null;
-  data: Data
+  data: DataService
 }
-export interface Data {
-  service_code: string;
-  service_icon: string;
-  service_name: string;
-  service_tariff: number
+
+export interface ResponseBanner {
+  message: string;
+  status: number;
+  loading: boolean;
+  error: string | null;
+  data: DataBanner
+}
+
+export interface ResponseProfile {
+  message?: string;
+  status?: number;
+  loading?: boolean;
+  error?: string | null;
+  data?: DataProfile
 }

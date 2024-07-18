@@ -8,7 +8,7 @@ const HeaderCcmponent: React.FC<DataProfile> = (item) => {
           <Text style={{ marginLeft: 8 }}>SIMS PPOB</Text>
         </View>
        <TouchableOpacity onPress={() => item.navigation.navigate("Profile")}>
-       <Image source={{ uri: item?.profile_image }} style={styles.userIcon} />
+       <Image source={{ uri: item?.profile_image || "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/680px-Default_pfp.svg.png" }} style={styles.userIcon} />
        </TouchableOpacity>
       </View>
     )

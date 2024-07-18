@@ -14,9 +14,6 @@ import TransactionScreen from '@screens/TransactionScreen';
 import ProfileScreen from '@screens/ProfileScreen';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faHome, faSackDollar, faCreditCard, faUser } from '@fortawesome/free-solid-svg-icons';
-// import { AuthProvider, useAuth } from '@helper/AuthContext/AuthContext';
-// import { getData } from '@helper/LocalStorage';
-import { ActivityIndicator, View, StyleSheet } from 'react-native';
 import DataList from '@screens/DataList';
 import { Provider } from 'react-redux';
 import store from '@configRedux/store/store';
@@ -24,6 +21,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from '@configRedux/store/store';
 import { getData } from '@helper/LocalStorage';
 import { login } from '@configRedux/reducers/auth/reducerAuth';
+import Loading from '@components/atoms/Loading';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -75,12 +73,9 @@ const RootNavigator: React.FC = () => {
 
   if (loadingAuth) {
     return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#0000ff" />
-      </View>
+      <Loading/>
     );
   }
-  console.log('cekLogin',cekLogin)
   return (
     <NavigationContainer>
       <Stack.Navigator>
@@ -111,13 +106,7 @@ const App: React.FC = () => {
     </Provider>
   );
 }
-const styles = StyleSheet.create({
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});
+
 
 export default App;
 

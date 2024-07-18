@@ -34,8 +34,9 @@ const dataSlice = createSlice({
         state.error = null;
       })
       .addCase(postData.fulfilled, (state, action: PayloadAction<LoginResponse>) => {
-        state.loading = false;
         state.token = action.payload.data.token;
+        state.loading = false;
+
       })
       .addCase(postData.rejected, (state, action) => {
         state.loading = false;

@@ -3,6 +3,10 @@ import dataReducerLogin from '@configRedux/reducers/reducerLogin';
 import dataReducerBalance from '@configRedux/reducers/reducerBalance';
 import dataReducerService from '@configRedux/reducers/reducerService';
 import dataReducerAuth from '@configRedux/reducers/auth/reducerAuth';
+import dataReducerBanner from '@configRedux/reducers/reducerBanner';
+import dataReducerProfile from '@configRedux/reducers/reducerProfile';
+
+
 
 
 
@@ -11,7 +15,9 @@ const rootReducer = combineReducers({
   dataLogin: dataReducerLogin,
   dataBalance: dataReducerBalance,
   dataService: dataReducerService,
-  dataAuth: dataReducerAuth
+  dataAuth: dataReducerAuth,
+  dataBanner: dataReducerBanner,
+  dataProfile: dataReducerProfile
 });
 
 // Configure the store with the combined reducers

@@ -26,8 +26,9 @@ const dataSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchDataBalance.fulfilled, (state, action: PayloadAction<DataTransaction>) => {
-        state.loading = false;
         state.balance = action.payload.balance;
+        state.loading = false;
+
       })
       .addCase(fetchDataBalance.rejected, (state, action) => {
         state.loading = false;

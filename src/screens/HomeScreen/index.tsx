@@ -1,5 +1,4 @@
-import { getDataFetchArray, getDataFetchObj } from '@helper/api/Api';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import {
@@ -7,7 +6,7 @@ import {
   Dimensions,
   TouchableOpacity
 } from 'react-native';
-import { DataBanner, DataService, DataTransaction, DataProfile } from "config/Type/type";
+import { DataProfile } from "config/Type/type";
 import { faEye } from '@fortawesome/free-solid-svg-icons';
 import HeaderCcmponent from '@components/atoms/HeaderComponent';
 import WelcomeMessageComponent from '@components/atoms/WelcomeMessageComponent';
@@ -16,53 +15,66 @@ import { RootState, AppDispatch } from '@configRedux/store/store';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchDataService } from '@configRedux/actions/actionGets/fetchService';
 import { _removeData } from '@helper/LocalStorage';
+import { fetchDataBanner } from '@configRedux/actions/actionGets/fetchDataBanner';
+import Loading from '@components/atoms/Loading';
+import ErrorComponent from '@components/atoms/ErrorComponent';
+import { fetchDataProfile } from '@configRedux/actions/actionGets/fetchDataProfile';
+
 
 const { width: screenWidth } = Dimensions.get('window');
 const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
-  const [dataBanner, setBanner] = useState<DataBanner[] | null>(null);
   const [dataProfile, setDataProfile] = useState<DataProfile | null>(null);
   const [isValueVisible, setVisible] = useState<boolean>(true);
-  const {balance, loading:loadingBalance, error:errorBalance } = useSelector((state: RootState) => state.dataBalance);
-  const {services} = useSelector((state: RootState) => state.dataService);
+  const { balance, loading: loadingBalance, error: errorBalance } = useSelector((state: RootState) => state.dataBalance);
+  const { services, loading: loadingServices, error: errorServices } = useSelector((state: RootState) => state.dataService);
+  const { banner, loading: loadingBanner, error: errorBanner } = useSelector((state: RootState) => state.dataBanner);
+  const { profile, loading: loadingProfile, error: errorProfile } = useSelector((state: RootState) => state.dataProfile);
+
   const dispatch: AppDispatch = useDispatch();
 
-  // useFocusEffect(
-  //   React.useCallback(() => {
-  //     // const updateEndpoint = async () => {
-  //     //   await getDataFetchObj(setDataTransaction, "balance");
-  //     //   await getDataFetchObj(setDataProfile, "profile");
-  //     // };
-  //     // updateEndpoint();
-  //     dispatch(fetchDataBalance("balance"));
-  //     dispatch(fetchDataService("services"));
-  //     // _removeData()
-  //   }, [dispatch])
-  // );
+  useFocusEffect(
+    React.useCallback(() => {
+      const updateEndpoint = async () => {
+        await fetchData();
+      };
+      updateEndpoint();
+    }, [dispatch])
+  );
 
-  useEffect(() =>{
-    dispatch(fetchDataBalance("balance"));
-    dispatch(fetchDataService("services"));
-  },[dispatch])
 
-  // const fetchData = async () => {
-  //   await Promise.all(
-  //     [
-  //       getDataFetchArray(setBanner, "banner"),
-  //       getDataFetchArray(setDataService, "services"),
-  //     ])
-  // };
+  const fetchData = async () => {
+    await Promise.all(
+      [
+        dispatch(fetchDataBalance("balance")),
+        dispatch(fetchDataService("services")),
+        dispatch(fetchDataBanner("banner")),
+        dispatch(fetchDataProfile("profile"))
+      ])
+  };
+
+  if (errorBalance || errorServices || errorBanner) {
+    return (
+      <ErrorComponent errorMessage={errorBalance || errorServices || errorBanner || errorProfile} />
+    )
+  }
+
+  if (loadingBalance || loadingBanner || loadingServices || loadingProfile) {
+    return (
+      <Loading />
+    )
+  }
 
   return (
     <View style={styles.container}>
       <ScrollView>
         {/* Header */}
         <HeaderCcmponent
-          profile_image={dataProfile?.profile_image}
+          profile_image={profile?.profile_image}
           navigation={navigation}
         />
         {/* Welcome Message */}
         <WelcomeMessageComponent
-          first_name={dataProfile?.first_name}
+          first_name={profile?.first_name}
         />
         {/* Balance Card */}
         <View style={styles.balanceCard}>
@@ -96,8 +108,8 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
 
         {/* Services Grid */}
         <View style={styles.servicesGrid}>
-          {services?.slice(0,9).map((service:any, index:number) => (
-            <TouchableOpacity onPress={() => navigation.navigate('Pembayaran', service)}>
+          {services?.slice(0, 9).map((service: any, index: number) => (
+            <TouchableOpacity key={index} onPress={() => navigation.navigate('Pembayaran', service)}>
               <View key={index} style={styles.serviceItem}>
                 <Image source={{ uri: service.service_icon }} style={styles.serviceIcon} />
                 <Text style={styles.serviceName}>{service.service_name}</Text>
@@ -118,7 +130,7 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
           pagingEnabled
           showsHorizontalScrollIndicator={false}
           style={styles.promoContainer}>
-          {dataBanner?.map((promo, index) => (
+          {banner?.map((promo: any, index: number) => (
             <View key={index} style={styles.promoItem}>
               <Image source={{ uri: promo.banner_image }} style={styles.promoImage} />
             </View>
