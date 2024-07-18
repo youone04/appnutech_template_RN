@@ -7,7 +7,8 @@
       "@assets/*": ["assets/*"],
       "@screens/*": ["screens/*"],
       "@utils/*": ["utils/*"],
-      "@helper/*": ["helper/*"]
+      "@helper/*": ["helper/*"],
+      "@configRedux/*": ["configRedux/*"]
     }
   }
 }

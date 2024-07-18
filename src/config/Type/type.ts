@@ -9,6 +9,7 @@ export interface DataService {
   service_icon: string,
   service_tariff: number
 }
+
 export interface DataTransaction {
   balance: any
 }

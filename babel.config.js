@@ -11,6 +11,7 @@ module.exports = {
           '@screens': './src/screens',
           '@utils': './src/utils',
           '@helper': './src/helper',
+          '@configRedux': './src/configRedux',
         },
       },
     ],

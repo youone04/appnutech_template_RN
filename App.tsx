@@ -13,10 +13,18 @@ import PembayaranScreen from '@screens/PembayaranScreen';
 import TransactionScreen from '@screens/TransactionScreen';
 import ProfileScreen from '@screens/ProfileScreen';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
-import { faHome, faSackDollar, faCreditCard, faUser, faL } from '@fortawesome/free-solid-svg-icons';
-import { AuthProvider, useAuth } from '@helper/AuthContext/AuthContext';
-import { getData } from '@helper/LocalStorage';
+import { faHome, faSackDollar, faCreditCard, faUser } from '@fortawesome/free-solid-svg-icons';
+// import { AuthProvider, useAuth } from '@helper/AuthContext/AuthContext';
+// import { getData } from '@helper/LocalStorage';
 import { ActivityIndicator, View, StyleSheet } from 'react-native';
+import DataList from '@screens/DataList';
+import { Provider } from 'react-redux';
+import store from '@configRedux/store/store';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState, AppDispatch } from '@configRedux/store/store';
+import { getData } from '@helper/LocalStorage';
+import { login } from '@configRedux/reducers/auth/reducerAuth';
+
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
@@ -48,35 +56,36 @@ const AppNavigator = () => (
 
 
 const RootNavigator: React.FC = () => {
-  const { isLoggedIn, login } = useAuth();
-  const [loading, seLoading] = useState<boolean>(false);
+  // const { isLoggedIn, login } = useAuth();
+  const dispatch: AppDispatch = useDispatch();
+  const { login:cekLogin} = useSelector((state: RootState) => state.dataAuth);
+  const [loadingAuth, seLoading] = useState<boolean>(false);
   useEffect(() => {
     const hasil = async () => {
       seLoading(true);
       const token = await getData();
       if (token) {
-        login()
+        dispatch(login());
         seLoading(false);
-
       }
       seLoading(false);
     }
     hasil();
+  }, [dispatch]);
 
-  }, [isLoggedIn]);
-
-  if (loading) {
+  if (loadingAuth) {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#0000ff" />
       </View>
     );
   }
+  console.log('cekLogin',cekLogin)
   return (
     <NavigationContainer>
       <Stack.Navigator>
         {
-          isLoggedIn ?
+         cekLogin?
             <Stack.Group>
               <Stack.Screen
                 name="Home"
@@ -88,6 +97,7 @@ const RootNavigator: React.FC = () => {
             <Stack.Group>
               <Stack.Screen name="Login" component={LoginScreen} />
               <Stack.Screen name="Register" component={RegistrasiScreen} />
+              <Stack.Screen name="List" component={DataList} />
             </Stack.Group>
         }
       </Stack.Navigator>
@@ -96,13 +106,11 @@ const RootNavigator: React.FC = () => {
 };
 const App: React.FC = () => {
   return (
-    <AuthProvider>
-      <RootNavigator />
-    </AuthProvider>
+    <Provider store={store}>
+       <RootNavigator />
+    </Provider>
   );
 }
-//penggunaan auth helper
-
 const styles = StyleSheet.create({
   loadingContainer: {
     flex: 1,
@@ -112,3 +120,4 @@ const styles = StyleSheet.create({
 });
 
 export default App;
+
