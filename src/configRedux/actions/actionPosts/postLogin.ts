@@ -7,24 +7,15 @@ interface DataLogin {
   url: string;
 }
 
-interface LoginResponse {
-  token: string;
-  user: {
-    id: number;
-    email: string;
-  };
+interface DataResponseLogin {
+  data: Token;
+  message: string;
+  status: number
 }
 
-interface DataState {
-  loading: boolean;
-  error: string | null;
+interface Token{
+  token: string
 }
-
-const initialState: DataState = {
-  loading: false,
-  error: null,
-};
-
 export const postData = createAsyncThunk(
   'data/postData',
   async ({ email, password, url }: DataLogin, { rejectWithValue }) => {
@@ -40,7 +31,7 @@ export const postData = createAsyncThunk(
       if (!response.ok) {
         throw new Error('Failed to post data');
       }
-      const data: any = await response.json();
+      const data: DataResponseLogin = await response.json();
       await _storeData(data.data.token);
       // console.log(data.data.token)
       return data;
