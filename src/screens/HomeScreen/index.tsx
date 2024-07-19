@@ -6,7 +6,6 @@ import {
   Dimensions,
   TouchableOpacity
 } from 'react-native';
-import { DataProfile } from "config/Type/type";
 import { faEye } from '@fortawesome/free-solid-svg-icons';
 import HeaderCcmponent from '@components/atoms/HeaderComponent';
 import WelcomeMessageComponent from '@components/atoms/WelcomeMessageComponent';
@@ -20,18 +19,14 @@ import ErrorComponent from '@components/atoms/ErrorComponent';
 import { fetchDataProfile } from '@configRedux/actions/actionGets/fetchDataProfile';
 import { useSelector, useDispatch } from 'react-redux';
 
-
 const { width: screenWidth } = Dimensions.get('window');
 const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
-  const [dataProfile, setDataProfile] = useState<DataProfile | null>(null);
   const [isValueVisible, setVisible] = useState<boolean>(true);
   const { balance, loading: loadingBalance, error: errorBalance } = useSelector((state: RootState) => state.dataBalance);
   const { services, loading: loadingServices, error: errorServices } = useSelector((state: RootState) => state.dataService);
   const { banner, loading: loadingBanner, error: errorBanner } = useSelector((state: RootState) => state.dataBanner);
   const { profile, loading: loadingProfile, error: errorProfile } = useSelector((state: RootState) => state.dataProfile);
-
   const dispatch: AppDispatch = useDispatch();
-
   useFocusEffect(
     React.useCallback(() => {
       const updateEndpoint = async () => {
@@ -40,7 +35,6 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
       updateEndpoint();
     }, [dispatch])
   );
-
 
   const fetchData = async () => {
     await Promise.all(

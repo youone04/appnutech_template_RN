@@ -33,7 +33,6 @@ export const postData = createAsyncThunk(
       }
       const data: DataResponseLogin = await response.json();
       await _storeData(data.data.token);
-      // console.log(data.data.token)
       return data;
     } catch (error) {
       return rejectWithValue('Failed to post data');

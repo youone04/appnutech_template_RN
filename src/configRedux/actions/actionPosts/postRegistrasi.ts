@@ -1,31 +1,41 @@
+import { _storeData } from '@helper/LocalStorage';
 import { createAsyncThunk } from '@reduxjs/toolkit';
-// import { increment } from '../../reducers/index';
-import axios from 'axios';
 
-
-export const incrementAsync = createAsyncThunk(
-  'counter/incrementAsync',
-  async (_, { dispatch }) => {
-    setTimeout(() => {
-      // dispatch(increment());
-    }, 1000);
-  }
-);
-
-
-interface Item {
-  id: number;
-  title: string;
+interface DataLogin {
+  email: string;
+  password: string;
+  url: string;
 }
 
-export const fetchData = createAsyncThunk(
-  'data/fetchData',
-  async (_, { rejectWithValue }) => {
+interface DataResponseRegistrasi {
+  data: Token;
+  message: string;
+  status: number
+}
+
+interface Token{
+  token: string
+}
+export const postDataRegistrasi = createAsyncThunk(
+  'registrasi/postData',
+  async ({ email, password, url }: DataLogin, { rejectWithValue }) => {
     try {
-      const response = await axios.get<Item[]>('https://jsonplaceholder.typicode.com/todos');
-      return response.data;
+      const response = await fetch(`https://take-home-test-api.nutech-integrasi.app/${url}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to post data');
+      }
+      const data: DataResponseRegistrasi = await response.json();
+     
+      return data;
     } catch (error) {
-      return rejectWithValue('Failed to fetch data');
+      return rejectWithValue('Failed to post data');
     }
   }
 );
