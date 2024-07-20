@@ -4,12 +4,12 @@ import { useFocusEffect } from '@react-navigation/native';
 import { View, Text, TouchableOpacity, StyleSheet, FlatList, ActivityIndicator } from 'react-native';
 import { DataRecord } from "config/Type/type";
 
-import Loading from '@components/atoms/Loading';
 import ErrorComponent from '@components/atoms/ErrorComponent';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '@configRedux/dinamisRedux/store';
 import { fetchDataPrivate } from '@configRedux/dinamisRedux/actions';
 import { logout } from '@configRedux/reducers/auth/reducerAuth';
+import Placeholder from '@components/atoms/Placeholder';
 
 const TransactionScreen: React.FC = () => {
     const dispatch: AppDispatch = useDispatch();
@@ -60,7 +60,7 @@ const TransactionScreen: React.FC = () => {
     }
 
     if (dataRedux?.balance?.loading || dataRedux?.transaction?.loading) {
-        <Loading />
+        <Placeholder />
     }
 
     return (

@@ -10,13 +10,13 @@ import { faEye } from '@fortawesome/free-solid-svg-icons';
 import HeaderCcmponent from '@components/atoms/HeaderComponent';
 import WelcomeMessageComponent from '@components/atoms/WelcomeMessageComponent';
 import { _removeData } from '@helper/LocalStorage';
-import Loading from '@components/atoms/Loading';
 import ErrorComponent from '@components/atoms/ErrorComponent';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '@configRedux/dinamisRedux/store';
 import { fetchDataPrivate } from '@configRedux/dinamisRedux/actions';
 import { logout } from '@configRedux/reducers/auth/reducerAuth';
+import Placeholder from '@components/atoms/Placeholder';
 
 const { width: screenWidth } = Dimensions.get('window');
 const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
@@ -64,7 +64,7 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
 
   ) {
     return (
-      <Loading />
+     <Placeholder/>
     )
   }
 

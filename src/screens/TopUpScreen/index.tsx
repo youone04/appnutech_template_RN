@@ -7,11 +7,11 @@ import ModalComponent from '@components/atoms/ModalComoponent';
 import { useFocusEffect } from '@react-navigation/native';
 import ErrorComponent from '@components/atoms/ErrorComponent';
 import { postDataTopUp } from '@configRedux/actions/actionPosts/postTopUp';
-import Loading from '@components/atoms/Loading';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '@configRedux/dinamisRedux/store';
 import { fetchDataPrivate } from '@configRedux/dinamisRedux/actions';
+import Placeholder from '@components/atoms/Placeholder';
 
 const TopUpScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   const dispatch: AppDispatch = useDispatch();
@@ -121,7 +121,7 @@ const TopUpScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   }
 
   if(dataRedux?.balance?.loading ){
-    <Loading/>
+    <Placeholder/>
   }
   return (
     <View style={styles.container}>

@@ -12,9 +12,9 @@ import { logout } from "@configRedux/reducers/auth/reducerAuth";
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '@configRedux/dinamisRedux/store';
 import ErrorComponent from "@components/atoms/ErrorComponent";
-import Loading from "@components/atoms/Loading";
 import { fetchDataPrivate } from "@configRedux/dinamisRedux/actions";
 import { delay } from "@helper/func";
+import Placeholder from "@components/atoms/Placeholder";
 
 
 const ProfileScreen: React.FC = () => {
@@ -151,7 +151,7 @@ const ProfileScreen: React.FC = () => {
 
     if (dataRedux?.profile?.loading) {
         return (
-            <Loading />
+            <Placeholder/>
         )
     }
 
