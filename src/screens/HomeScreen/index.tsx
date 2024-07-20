@@ -50,8 +50,6 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   ) {
     return (
       <>
-        {Alert.alert(`${dataRedux?.balance?.error || dataRedux?.profile?.error ||
-          dataRedux?.banner?.error || dataRedux?.services?.error}`)}
         <ErrorComponent errorMessage={
           dataRedux?.balance?.error ||
           dataRedux?.profile?.error ||

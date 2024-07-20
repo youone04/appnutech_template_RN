@@ -3,46 +3,66 @@ import React, { useState } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { View, Text, TouchableOpacity, StyleSheet, FlatList, ActivityIndicator } from 'react-native';
 import { DataRecord } from "config/Type/type";
-import {getDataFetchObjWithPagination } from '@helper/api/Api';
-import { useSelector } from 'react-redux';
-import { RootState } from '@configRedux/store/store';
+
 import Loading from '@components/atoms/Loading';
 import ErrorComponent from '@components/atoms/ErrorComponent';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState, AppDispatch } from '@configRedux/dinamisRedux/store';
+import { fetchDataPrivate } from '@configRedux/dinamisRedux/actions';
+import { logout } from '@configRedux/reducers/auth/reducerAuth';
 
 const TransactionScreen: React.FC = () => {
-    const { balance, loading: loadingBalance, error: errorBalance } = useSelector((state: RootState) => state.dataBalance);
+    const dispatch: AppDispatch = useDispatch();
+    const dataRedux = useSelector((state: RootState) => state.data);
     const [DataHistoriTransaction, setHistoruTransaction] = useState<DataRecord[]>([])
     const [offset, setOffset] = useState<number>(0);
     const [loading, setLoading] = useState<boolean>(false);
 
     useFocusEffect(
         React.useCallback(() => {
-          fetchData();
-          return () => {
-          };
-        }, [])
-      );
+            fetchData();
+            return () => {
+            };
+        }, [dispatch])
+    );
     const fetchData = async () => {
-        await Promise.all([
-            getDataFetchObjWithPagination(setHistoruTransaction, `transaction/history?offset=${offset}&limit=${5}`, offset)
+        const hasil: any = await Promise.all([
+            dispatch(fetchDataPrivate({
+                idredux: "transaction",
+                endpoint: `https://take-home-test-api.nutech-integrasi.app/transaction/history?offset=${offset}&limit=${5}`,
+                method: 'GET',
+                logOut: () => dispatch(logout())
+            }))
+
         ]);
+        setHistoruTransaction(hasil[0].payload.data.data.records)
     }
     const loadMore = () => {
         setLoading(true);
         setTimeout(async () => {
             setOffset((prev) => prev + 1);
-            await getDataFetchObjWithPagination(setHistoruTransaction, `transaction/history?offset=${offset + 1}&limit=${5}`, offset + 1);
+          const hasil:any =  await Promise.all([
+            await dispatch(fetchDataPrivate({
+                idredux: "transaction",
+                endpoint: `https://take-home-test-api.nutech-integrasi.app/transaction/history?offset=${offset + 1}&limit=${5}`,
+                method: 'GET',
+                logOut: () => dispatch(logout())
+            }))
+          ])
+            setHistoruTransaction(prevData => [...prevData, ...hasil[0].payload.data.data.records])
             setLoading(false);
+
         }, 3000)
     }
 
-    if(errorBalance){
-        <ErrorComponent error={errorBalance} />
+    if (dataRedux?.balance?.error || dataRedux?.transaction?.error) {
+        <ErrorComponent error={dataRedux?.balance?.error || dataRedux?.transaction?.error} />
     }
 
-    if(loadingBalance){
-        <Loading/>
+    if (dataRedux?.balance?.loading || dataRedux?.transaction?.loading) {
+        <Loading />
     }
+
     return (
         <View style={styles.container}>
             <View style={{ backgroundColor: '#e74c3c', borderRadius: 10, padding: 18 }}>
@@ -52,7 +72,7 @@ const TransactionScreen: React.FC = () => {
                     currency: 'IDR',
                     minimumFractionDigits: 0,
                     maximumFractionDigits: 0,
-                }).format(balance || 0)}</Text>
+                }).format(dataRedux?.balance?.items?.data?.balance || 0)}</Text>
             </View>
             <View style={{ marginVertical: 25 }}>
                 <Text style={styles.promptText}>Transaksi</Text>
