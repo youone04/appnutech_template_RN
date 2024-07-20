@@ -6,15 +6,16 @@ import { delay, formatNumber, removeFormatting } from '@helper/func';
 import ModalComponent from '@components/atoms/ModalComoponent';
 import { useFocusEffect } from '@react-navigation/native';
 import ErrorComponent from '@components/atoms/ErrorComponent';
-import { useSelector, useDispatch } from 'react-redux';
-import { RootState, AppDispatch } from '@configRedux/store/store';
 import { postDataTopUp } from '@configRedux/actions/actionPosts/postTopUp';
 import Loading from '@components/atoms/Loading';
 
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState, AppDispatch } from '@configRedux/dinamisRedux/store';
+import { fetchDataPrivate } from '@configRedux/dinamisRedux/actions';
+
 const TopUpScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   const dispatch: AppDispatch = useDispatch();
-  const { balance, loading, error } = useSelector((state: RootState) => state.dataBalance);
-  const { loading: loadingBalance, error: errorBalance } = useSelector((state: RootState) => state.dataTopUp);
+  const dataRedux = useSelector((state: RootState) => state.data);
   const [loadingButton , setLoading] = useState<boolean>(false);
 
 
@@ -51,7 +52,7 @@ const TopUpScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     const payload = { top_up_amount: Number(nominal), url: "topup" }
     setLoading(true);
     await delay(3000);
-    const resultAction = await dispatch(postDataTopUp(payload));
+    const resultAction = await dispatch(fetchDataPrivate({ idredux: "topUpPost", endpoint: 'https://take-home-test-api.nutech-integrasi.app/topup', method: 'POST', body: payload }));
     if (postDataTopUp.rejected.match(resultAction)) {
       return handleRepsonseFailed();
     }
@@ -115,15 +116,13 @@ const TopUpScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   }
   const nominal = Number(removeFormatting(topUpAmount));
 
-  if (errorBalance || error) {
-    <ErrorComponent errorMessage={errorBalance || error} />
+  if (dataRedux?.balance?.error) {
+    <ErrorComponent errorMessage={dataRedux?.balance?.error} />
   }
 
-  if(loading){
+  if(dataRedux?.balance?.loading ){
     <Loading/>
   }
-
-
   return (
     <View style={styles.container}>
       <View style={{ backgroundColor: '#e74c3c', borderRadius: 10, padding: 18 }}>
@@ -133,7 +132,7 @@ const TopUpScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
           currency: 'IDR',
           minimumFractionDigits: 0,
           maximumFractionDigits: 0,
-        }).format(balance || 0)}</Text>
+        }).format(dataRedux?.balance?.items?.data?.balance || 0)}</Text>
       </View>
       <View style={{ marginVertical: 40 }}>
         <Text style={styles.promptText}>Silahkan masukan</Text>
@@ -162,14 +161,14 @@ const TopUpScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
       </View>
       <TouchableOpacity
         style={styles.topUpButton}
-        disabled={loadingButton || loadingBalance || (nominal < 10000)}
+        disabled={loadingButton || (nominal < 10000)}
         onPress={() => setModalVisible(prev => ({
           ...prev,
           cek: true
         }))}
       >
         {
-          loadingButton || loadingBalance ?
+          loadingButton ?
             <ActivityIndicator /> :
             <Text style={styles.topUpButtonText}>Top Up</Text>
         }
@@ -180,12 +179,12 @@ const TopUpScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         service_name="Anda yakin untuk Top Up sebesar"
         service_tarif={Number(removeFormatting(topUpAmount))}
         modalVisible={modalVisible}
-        loading={loadingButton || loadingBalance}
+        loading={loadingButton}
         textButton='Ya, lanjutkan Top Up'
         setModalVisible={setModalVisible} />
       <ModalComponent
         isSucces={true}
-        loading={loadingButton || loadingBalance}
+        loading={loadingButton}
         navigation={navigation}
         urlImage={'https://w7.pngwing.com/pngs/399/483/png-transparent-check-complete-done-green-success-valid-greenline-icon-thumbnail.png'}
         service_name={`Top Up sebesar`}
@@ -195,7 +194,7 @@ const TopUpScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         setModalVisible={setModalVisibleSucces} />
       <ModalComponent
         isFailed={true}
-        loading={loadingBalance || loadingBalance}
+        loading={false}
         navigation={navigation}
         urlImage={'https://cdn-icons-png.flaticon.com/512/6659/6659895.png'}
         service_name={`Top Up sebesar`}

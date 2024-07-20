@@ -4,7 +4,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import {
   View, Text, Image, StyleSheet, ScrollView,
   Dimensions,
-  TouchableOpacity
+  TouchableOpacity,
+  Alert
 } from 'react-native';
 import { faEye } from '@fortawesome/free-solid-svg-icons';
 import HeaderCcmponent from '@components/atoms/HeaderComponent';
@@ -16,6 +17,7 @@ import ErrorComponent from '@components/atoms/ErrorComponent';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '@configRedux/dinamisRedux/store';
 import { fetchDataPrivate } from '@configRedux/dinamisRedux/actions';
+import { logout } from '@configRedux/reducers/auth/reducerAuth';
 
 const { width: screenWidth } = Dimensions.get('window');
 const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
@@ -35,7 +37,7 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   const fetchDataGet = async () => {
     await Promise.all(
       [
-        dispatch(fetchDataPrivate({ idredux: "balance", endpoint: 'https://take-home-test-api.nutech-integrasi.app/balance', method: 'GET' })),
+        dispatch(fetchDataPrivate({ idredux: "balance", endpoint: 'https://take-home-test-api.nutech-integrasi.app/balance', method: 'GET', logOut: () => dispatch(logout()) })),
         dispatch(fetchDataPrivate({ idredux: "services", endpoint: 'https://take-home-test-api.nutech-integrasi.app/services', method: 'GET' })),
         dispatch(fetchDataPrivate({ idredux: "banner", endpoint: 'https://take-home-test-api.nutech-integrasi.app/banner', method: 'GET' })),
         dispatch(fetchDataPrivate({ idredux: "profile", endpoint: 'https://take-home-test-api.nutech-integrasi.app/profile', method: 'GET' }))
@@ -43,16 +45,20 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   };
 
   if (dataRedux?.balance?.error || dataRedux?.profile?.error ||
-    dataRedux?.banner?.error ||  dataRedux?.services?.error
+    dataRedux?.banner?.error || dataRedux?.services?.error
 
   ) {
     return (
-      <ErrorComponent errorMessage={
-        dataRedux?.balance?.error || 
-        dataRedux?.profile?.error || 
-        dataRedux?.banner?.error || 
-        dataRedux?.services?.error
-      } />
+      <>
+        {Alert.alert(`${dataRedux?.balance?.error || dataRedux?.profile?.error ||
+          dataRedux?.banner?.error || dataRedux?.services?.error}`)}
+        <ErrorComponent errorMessage={
+          dataRedux?.balance?.error ||
+          dataRedux?.profile?.error ||
+          dataRedux?.banner?.error ||
+          dataRedux?.services?.error
+        } />
+      </>
     )
   }
 
