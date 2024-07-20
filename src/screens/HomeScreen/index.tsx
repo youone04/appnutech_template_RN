@@ -9,50 +9,57 @@ import {
 import { faEye } from '@fortawesome/free-solid-svg-icons';
 import HeaderCcmponent from '@components/atoms/HeaderComponent';
 import WelcomeMessageComponent from '@components/atoms/WelcomeMessageComponent';
-import { fetchDataBalance } from '@configRedux/actions/actionGets/fetchDataBalance';
-import { RootState, AppDispatch } from '@configRedux/store/store';
-import { fetchDataService } from '@configRedux/actions/actionGets/fetchService';
 import { _removeData } from '@helper/LocalStorage';
-import { fetchDataBanner } from '@configRedux/actions/actionGets/fetchDataBanner';
 import Loading from '@components/atoms/Loading';
 import ErrorComponent from '@components/atoms/ErrorComponent';
-import { fetchDataProfile } from '@configRedux/actions/actionGets/fetchDataProfile';
-import { useSelector, useDispatch } from 'react-redux';
+
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState, AppDispatch } from '@configRedux/dinamisRedux/store';
+import { fetchDataPrivate } from '@configRedux/dinamisRedux/actions';
 
 const { width: screenWidth } = Dimensions.get('window');
 const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   const [isValueVisible, setVisible] = useState<boolean>(true);
-  const { balance, loading: loadingBalance, error: errorBalance } = useSelector((state: RootState) => state.dataBalance);
-  const { services, loading: loadingServices, error: errorServices } = useSelector((state: RootState) => state.dataService);
-  const { banner, loading: loadingBanner, error: errorBanner } = useSelector((state: RootState) => state.dataBanner);
-  const { profile, loading: loadingProfile, error: errorProfile } = useSelector((state: RootState) => state.dataProfile);
   const dispatch: AppDispatch = useDispatch();
+  const dataRedux = useSelector((state: RootState) => state.data);
+
   useFocusEffect(
     React.useCallback(() => {
       const updateEndpoint = async () => {
-        await fetchData();
+        await fetchDataGet();
       };
       updateEndpoint();
     }, [dispatch])
   );
 
-  const fetchData = async () => {
+  const fetchDataGet = async () => {
     await Promise.all(
       [
-        dispatch(fetchDataBalance("balance")),
-        dispatch(fetchDataService("services")),
-        dispatch(fetchDataBanner("banner")),
-        dispatch(fetchDataProfile("profile"))
+        dispatch(fetchDataPrivate({ idredux: "balance", endpoint: 'https://take-home-test-api.nutech-integrasi.app/balance', method: 'GET' })),
+        dispatch(fetchDataPrivate({ idredux: "services", endpoint: 'https://take-home-test-api.nutech-integrasi.app/services', method: 'GET' })),
+        dispatch(fetchDataPrivate({ idredux: "banner", endpoint: 'https://take-home-test-api.nutech-integrasi.app/banner', method: 'GET' })),
+        dispatch(fetchDataPrivate({ idredux: "profile", endpoint: 'https://take-home-test-api.nutech-integrasi.app/profile', method: 'GET' }))
       ])
   };
 
-  if (errorBalance || errorServices || errorBanner) {
+  if (dataRedux?.balance?.error || dataRedux?.profile?.error ||
+    dataRedux?.banner?.error ||  dataRedux?.services?.error
+
+  ) {
     return (
-      <ErrorComponent errorMessage={errorBalance || errorServices || errorBanner || errorProfile} />
+      <ErrorComponent errorMessage={
+        dataRedux?.balance?.error || 
+        dataRedux?.profile?.error || 
+        dataRedux?.banner?.error || 
+        dataRedux?.services?.error
+      } />
     )
   }
 
-  if (loadingBalance || loadingBanner || loadingServices || loadingProfile) {
+  if (dataRedux?.balance?.loading || dataRedux?.profile?.loading ||
+    dataRedux?.banner?.loading || dataRedux?.services?.loading
+
+  ) {
     return (
       <Loading />
     )
@@ -63,12 +70,12 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
       <ScrollView>
         {/* Header */}
         <HeaderCcmponent
-          profile_image={profile?.profile_image}
+          profile_image={dataRedux?.profile?.items?.data?.profile_image}
           navigation={navigation}
         />
         {/* Welcome Message */}
         <WelcomeMessageComponent
-          first_name={profile?.first_name}
+          first_name={dataRedux?.profile?.items?.data?.first_name}
         />
         {/* Balance Card */}
         <View style={styles.balanceCard}>
@@ -80,7 +87,7 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
                 currency: 'IDR',
                 minimumFractionDigits: 0,
                 maximumFractionDigits: 0,
-              }).format(balance || 0)
+              }).format(dataRedux?.balance?.items?.data?.balance || 0)
               }
             </Text> :
               <View style={{ flexDirection: 'row', marginVertical: 20 }}>
@@ -102,7 +109,7 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
 
         {/* Services Grid */}
         <View style={styles.servicesGrid}>
-          {services?.slice(0, 9).map((service: any, index: number) => (
+          {dataRedux?.services?.items?.data?.slice(0, 9).map((service: any, index: number) => (
             <TouchableOpacity key={index} onPress={() => navigation.navigate('Pembayaran', service)}>
               <View key={index} style={styles.serviceItem}>
                 <Image source={{ uri: service.service_icon }} style={styles.serviceIcon} />
@@ -124,7 +131,7 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
           pagingEnabled
           showsHorizontalScrollIndicator={false}
           style={styles.promoContainer}>
-          {banner?.map((promo: any, index: number) => (
+          {dataRedux?.banner?.items?.data?.map((promo: any, index: number) => (
             <View key={index} style={styles.promoItem}>
               <Image source={{ uri: promo.banner_image }} style={styles.promoImage} />
             </View>

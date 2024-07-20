@@ -1,4 +1,4 @@
-import { getData } from '@helper/LocalStorage';
+import { _removeData, getData } from '@helper/LocalStorage';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
 interface DataBalance {
@@ -24,12 +24,16 @@ export const fetchDataBalance = createAsyncThunk(
                 },
             });
             if (!response.ok) {
-                throw new Error('Failed to fetch data');
+                const error = await response.json();
+                if(error.status === 108){
+                    await _removeData()
+                }
+                throw new Error(error.message);
             }
             const dataResponse:DataBalance = await response.json();
             return dataResponse.data;
         } catch (error) {
-            return rejectWithValue('Failed to fetch data');
+            return rejectWithValue(`Failed fetch data`);
         }
     }
 );

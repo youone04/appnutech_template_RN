@@ -15,14 +15,15 @@ import ProfileScreen from '@screens/ProfileScreen';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faHome, faSackDollar, faCreditCard, faUser } from '@fortawesome/free-solid-svg-icons';
 import DataList from '@screens/DataList';
-import { Provider } from 'react-redux';
-import store from '@configRedux/store/store';
+// import { Provider } from 'react-redux';
+// import store from '@configRedux/store/store';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState, AppDispatch } from '@configRedux/store/store';
-import { getData } from '@helper/LocalStorage';
+import { RootState, AppDispatch } from '@configRedux/dinamisRedux/store';
+import { _removeData, getData } from '@helper/LocalStorage';
 import { login } from '@configRedux/reducers/auth/reducerAuth';
 import Loading from '@components/atoms/Loading';
-
+import { Provider } from "react-redux";
+import store from "@configRedux/dinamisRedux/store";
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
@@ -54,7 +55,6 @@ const AppNavigator = () => (
 
 
 const RootNavigator: React.FC = () => {
-  // const { isLoggedIn, login } = useAuth();
   const dispatch: AppDispatch = useDispatch();
   const { login:cekLogin} = useSelector((state: RootState) => state.dataAuth);
   const [loadingAuth, seLoading] = useState<boolean>(false);

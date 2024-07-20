@@ -2,19 +2,18 @@ import FieldWithIcon from '@components/atoms/FieldWithIcon';
 import { faAt, faLock } from '@fortawesome/free-solid-svg-icons';
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image, ActivityIndicator, Alert } from 'react-native';
+// import { useAuth } from '@helper/AuthContext/AuthContext';
 import { _storeData } from '@helper/LocalStorage';
 import { validataForm, validateEmail } from '@helper/func';
 import { DataLogin, DataNotif } from "config/Type/type"
 import ModalNotif from '@components/atoms/ModalNotif';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState, AppDispatch } from '@configRedux/store/store';
+import { postData } from '@configRedux/actions/actionPosts/postLogin';
 import { login } from '@configRedux/reducers/auth/reducerAuth';
 
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState, AppDispatch } from '@configRedux/dinamisRedux/store';
-import { fetchData } from '@configRedux/dinamisRedux/actions';
-
 const LoginScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
-    const dataRedux = useSelector((state: RootState) => state.data);
-
+    const { loading } = useSelector((state: RootState) => state.dataLogin);
     const dispatch: AppDispatch = useDispatch();
 
     const [notif, setNotif] = useState<DataNotif>({ notif: false });
@@ -43,8 +42,9 @@ const LoginScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
             return null
         } else {
             setNotif({ notif: false });
-            const resultAction = await  dispatch(fetchData({ idredux: "loginPost", endpoint: 'https://take-home-test-api.nutech-integrasi.app/login', method: 'POST', body: dataLogin }));
-            if (fetchData.rejected.match(resultAction)) {
+            const payload = { email: dataLogin.email, password: dataLogin.password, url: "login" };
+            const resultAction = await dispatch(postData(payload));
+            if (postData.rejected.match(resultAction)) {
                 setModalVisible({
                     cek: true,
                     message: resultAction.payload as string,
@@ -88,9 +88,9 @@ const LoginScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
                 onChange={(text: string) => handleInputChange('password', text)}
                 value={dataLogin.password}
             />
-            <TouchableOpacity disabled={dataRedux?.loginPost?.loading} onPress={handleLogin} style={styles.button}>
+            <TouchableOpacity disabled={loading} onPress={handleLogin} style={styles.button}>
                 {
-                    dataRedux?.loginPost?.loading ?
+                    loading ?
                         <ActivityIndicator /> :
                         <Text style={styles.buttonText}>Masuk</Text>
                 }
