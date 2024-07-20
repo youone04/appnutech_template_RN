@@ -4,8 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import {
   View, Text, Image, StyleSheet, ScrollView,
   Dimensions,
-  TouchableOpacity,
-  Alert
+  TouchableOpacity
 } from 'react-native';
 import { faEye } from '@fortawesome/free-solid-svg-icons';
 import HeaderCcmponent from '@components/atoms/HeaderComponent';

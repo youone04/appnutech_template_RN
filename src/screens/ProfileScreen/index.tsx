@@ -1,47 +1,53 @@
 import AvatarComponent from "@components/atoms/AvatarComponent";
 import FieldWithIcon from "@components/atoms/FieldWithIcon";
 import { faAt, faUser } from "@fortawesome/free-solid-svg-icons";
-import { getDataFetchObj } from "@helper/api/Api";
-import React, {useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity,Alert, ActivityIndicator } from 'react-native';
-import { DataProfile, FieldProfile } from "config/Type/type";
+import React, { useState } from "react";
+import { View, Text, StyleSheet, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
+import { FieldProfile } from "config/Type/type";
 import { getData } from "@helper/LocalStorage";
 import { useFocusEffect } from "@react-navigation/native";
 import { launchImageLibrary } from 'react-native-image-picker';
 import { logout } from "@configRedux/reducers/auth/reducerAuth";
-import { useSelector, useDispatch } from 'react-redux';
-import { RootState, AppDispatch } from '@configRedux/store/store';
+
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState, AppDispatch } from '@configRedux/dinamisRedux/store';
+import ErrorComponent from "@components/atoms/ErrorComponent";
+import Loading from "@components/atoms/Loading";
+import { fetchDataPrivate } from "@configRedux/dinamisRedux/actions";
+import { delay } from "@helper/func";
+
 
 const ProfileScreen: React.FC = () => {
     const dispatch: AppDispatch = useDispatch();
-    const [dataProfile, setDataProfile] = useState<DataProfile | null>(null);
+    const dataRedux = useSelector((state: RootState) => state.data);
+
     const [hanldeEdit, setHandleEdit] = useState<boolean>(false);
     const [fieldProfile, setFieldProfile] = useState<FieldProfile>({
         email: "",
         first_name: "",
         last_name: ""
     })
-    const [loading , setLoading] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(false);
     const [cekPhoto, setCekPhoto] = useState<string | null>(null);
     useFocusEffect(
         React.useCallback(() => {
-          const updateEndpoint = async () => {
-            await fetchData();
-          };
-          updateEndpoint();
-          return () => {
-          };
-        }, [])
-      );
-    const fetchData = async () => {
-        const profile: DataProfile = await getDataFetchObj(setDataProfile, "profile")
-        setFieldProfile(prevData => {
-            return {
-                ...prevData,
-                email: profile?.email,
-                first_name: profile?.first_name,
-                last_name: profile?.last_name
+            const updateFunction = async () => {
+                await fetchData();
             }
+            updateFunction()
+            return () => {
+            };
+        }, [dispatch])
+    );
+    const fetchData = async () => {
+        const profile: any = await Promise.all(
+            [
+                dispatch(fetchDataPrivate({ idredux: "profile", endpoint: 'https://take-home-test-api.nutech-integrasi.app/profile', method: 'GET' }))
+            ]);
+        setFieldProfile({
+            email: profile[0].payload.data.data?.email,
+            first_name: profile[0].payload.data.data?.first_name,
+            last_name: profile[0].payload.data.data?.last_name
         })
     }
     const handleInputChange = (field: string, text: string) => {
@@ -55,29 +61,27 @@ const ProfileScreen: React.FC = () => {
     const postData = async () => {
         try {
             setLoading(true);
-            const token = await getData();
-            const payload = {
-                first_name: fieldProfile?.first_name,
-                last_name: fieldProfile?.last_name
-              }
-            const response = await fetch(`https://take-home-test-api.nutech-integrasi.app/profile/update`, {
-                headers: {
-                    "Content-Type": "application/json",
-                    'Authorization': `Bearer ${token}`
-                },
-                method: 'PUT',
-                body: JSON.stringify(payload)
-            });
-            const hasilResponse = await response.json();
-            if (hasilResponse.status !== 0) {
+            await delay(2000)
+            const payload: FieldProfile = {
+                first_name: fieldProfile.first_name,
+                last_name: fieldProfile.last_name
+            }
+            const resultAction: any = await dispatch(fetchDataPrivate({
+                idredux: "profilePut",
+                endpoint: 'https://take-home-test-api.nutech-integrasi.app/profile/update',
+                method: 'PUT', body: payload, logOut: () => dispatch(logout())
+            }));
+            let message = resultAction.payload.data.message;
+            if (fetchDataPrivate.rejected.match(resultAction)) {
                 setLoading(false);
                 setHandleEdit(!hanldeEdit);
-                return  Alert.alert(hasilResponse.message);
+                return Alert.alert(message)
+
             }
-            Alert.alert(hasilResponse.message)
+            Alert.alert(message)
             setLoading(false);
-            fetchData();
             setHandleEdit(!hanldeEdit);
+            await fetchData()
         } catch (e) {
             setLoading(false);
             setHandleEdit(!hanldeEdit);
@@ -85,59 +89,79 @@ const ProfileScreen: React.FC = () => {
     }
     const handleChoosePhoto = () => {
         launchImageLibrary({ mediaType: 'photo' }, response => {
-          if (response.didCancel) {
-            console.log('User cancelled image picker');
-          } else if (response.errorMessage) {
-            console.error('ImagePicker Error: ', response.errorMessage);
-          } else if (response.assets && response.assets.length > 0) {
-            const source = response.assets[0].uri;
-            if (source) {
-              setCekPhoto(source);
-              handleUploadPhoto(source);
+            if (response.didCancel) {
+                console.log('User cancelled image picker');
+            } else if (response.errorMessage) {
+                console.error('ImagePicker Error: ', response.errorMessage);
+            } else if (response.assets && response.assets.length > 0) {
+                const source = response.assets[0].uri;
+                if (source) {
+                    setCekPhoto(source);
+                    handleUploadPhoto(source);
+                }
             }
-          }
         });
-      };
-      const handleUploadPhoto = async (photoUri: string) => {
+    };
+    const handleUploadPhoto = async (photoUri: string) => {
         const formData = new FormData();
         formData.append('file', {
-          uri: photoUri,
-          name: 'photo.jpg',
-          type: 'image/jpeg',
+            uri: photoUri,
+            name: 'photo.jpg',
+            type: 'image/jpeg',
         } as any);
         try {
             const token = await getData();
-          const response = await fetch('https://take-home-test-api.nutech-integrasi.app/profile/image', {
-            method: 'PUT',
-            body: formData,
-            headers: {
-              'Content-Type': 'multipart/form-data',
-              'Authorization': `Bearer ${token}`
-            },
-          });
-          if (response.ok) {
-            const responseData = await response.json();
-            console.log('responseData',responseData)
-            Alert.alert(responseData?.message);
-            console.log('Photo uploaded successfully:', responseData);
-          } else {
-            const responseData = await response.json();
-            console.log('responseData',responseData)
-            console.error('Error uploading photo:', response.statusText);
-            Alert.alert('Upload failed', 'There was an error uploading the photo. 1');
-          }
+            const response = await fetch('https://take-home-test-api.nutech-integrasi.app/profile/image', {
+                method: 'PUT',
+                body: formData,
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'Authorization': `Bearer ${token}`
+                },
+            });
+            if (response.ok) {
+                const responseData = await response.json();
+                console.log('responseData', responseData)
+                Alert.alert(responseData?.message);
+                console.log('Photo uploaded successfully:', responseData);
+            } else {
+                const responseData = await response.json();
+                console.log('responseData', responseData)
+                console.error('Error uploading photo:', response.statusText);
+                Alert.alert('Upload failed', 'There was an error uploading the photo. 1');
+            }
         } catch (error) {
-          console.error('Error uploading photo:', error);
-          Alert.alert('Upload failed', 'There was an error uploading the photo. 2');
+            console.error('Error uploading photo:', error);
+            Alert.alert('Upload failed', 'There was an error uploading the photo. 2');
         }
-      };
+    };
+
+    if (dataRedux?.profile?.error) {
+        return (
+            <>
+                <ErrorComponent errorMessage={
+                    dataRedux?.balance?.error ||
+                    dataRedux?.profile?.error ||
+                    dataRedux?.banner?.error ||
+                    dataRedux?.services?.error
+                } />
+            </>
+        )
+    }
+
+    if (dataRedux?.profile?.loading) {
+        return (
+            <Loading />
+        )
+    }
+
     return (
         <View style={styles.container}>
             <View style={[styles.box, { flex: 1 }]}>
                 <AvatarComponent
-                    last_name={dataProfile?.first_name}
-                    first_name={dataProfile?.last_name}
-                    profile_image={dataProfile?.profile_image}
+                    first_name={dataRedux?.profile?.items?.data?.first_name}
+                    last_name={dataRedux?.profile?.items?.data?.last_name}
+                    profile_image={dataRedux?.profile?.items?.data?.profile_image}
                     cekPhoto={cekPhoto}
                     handleChoosePhoto={() => handleChoosePhoto()}
                 />
@@ -186,11 +210,11 @@ const ProfileScreen: React.FC = () => {
                             <>
                                 <View style={{ alignItems: 'center' }}>
                                     <TouchableOpacity disabled={loading} onPress={() => postData()} style={[styles.buttonEdit]}>
-                                       {
-                                        loading?
-                                        <ActivityIndicator/>:
-                                        <Text style={styles.buttonTextEdit}>SIMPAN</Text>
-                                       }
+                                        {
+                                            loading ?
+                                                <ActivityIndicator /> :
+                                                <Text style={styles.buttonTextEdit}>SIMPAN</Text>
+                                        }
                                     </TouchableOpacity>
                                 </View>
                                 <View style={{ alignItems: 'center' }}>

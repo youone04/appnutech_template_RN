@@ -3,7 +3,6 @@ import { View, TextInput, StyleSheet, ViewStyle, TextStyle, KeyboardType, Text, 
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import ShowNotifField from '@components/atoms/ShowNotifField';
 import { faEye } from '@fortawesome/free-solid-svg-icons';
-import {DataSecureEntry} from "config/Type/type";
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 type FieldPropsWithIcon = {
     placeholder?: string;

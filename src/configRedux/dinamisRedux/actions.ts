@@ -1,39 +1,26 @@
 import { _removeData, _storeData, getData } from '@helper/LocalStorage';
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { Alert } from 'react-native';
-
-interface Item {
-  id: number;
-  title: string;
-}
-
-interface DataLogin {
-  email: string;
-  password: string;
-}
-
-interface DataTopUp {
-  top_up_amount: number;
-}
+import {FieldProfile , DataLogin, DataTopUp} from "config/Type/type"
 
 interface FetchDataParams {
   endpoint: string;
-  method: 'GET' | 'POST';
-  body?: Item | DataLogin | DataTopUp;
+  method: 'GET' | 'POST' | 'PUT';
+  body?: FieldProfile | DataLogin | DataTopUp;
   idredux: string;
   logOut?: any
+  formData?: any
 }
 
 export const fetchData = createAsyncThunk(
   'data/fetchData',
-  async ({ idredux, endpoint, method, body }: FetchDataParams, { rejectWithValue }) => {
+  async ({idredux, endpoint, method, body, formData }: FetchDataParams, { rejectWithValue }) => {
     try {
       const response = await fetch(endpoint, {
         method,
         headers: {
           'Content-Type': 'application/json',
         },
-        body: body ? JSON.stringify(body) : undefined,
+        body: body ? JSON.stringify(body) : formData ? formData : undefined,
       });
       if (!response.ok) {
         const error = await response.json();
@@ -52,16 +39,16 @@ export const fetchData = createAsyncThunk(
 
 export const fetchDataPrivate = createAsyncThunk(
   'data/fetchData',
-  async ({ idredux, endpoint, method, body, logOut }: FetchDataParams, { rejectWithValue }) => {
+  async ({ idredux, endpoint, method, body, formData, logOut }: FetchDataParams, { rejectWithValue }) => {
     try {
       const token = await getData();
       const response = await fetch(endpoint, {
         method,
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': formData ? 'multipart/form-data' :'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: body ? JSON.stringify(body) : undefined,
+        body: body ? JSON.stringify(body) : formData ? formData: undefined,
       });
       if (!response.ok) {
         const error = await response.json();

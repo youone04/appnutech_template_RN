@@ -89,3 +89,6 @@ export interface ResponseProfile {
   error?: string | null;
   data?: DataProfile
 }
+export interface DataTopUp {
+  top_up_amount: number;
+}
