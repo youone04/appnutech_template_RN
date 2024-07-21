@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '@configRedux/dinamisRedux/store';
 import { fetchDataPrivate } from '@configRedux/dinamisRedux/actions';
 import Placeholder from '@components/atoms/Placeholder';
+import { logout } from '@configRedux/reducers/auth/reducerAuth';
 
 const TopUpScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   const dispatch: AppDispatch = useDispatch();
@@ -52,7 +53,12 @@ const TopUpScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     const payload = { top_up_amount: Number(nominal), url: "topup" }
     setLoading(true);
     await delay(3000);
-    const resultAction = await dispatch(fetchDataPrivate({ idredux: "topUpPost", endpoint: 'https://take-home-test-api.nutech-integrasi.app/topup', method: 'POST', body: payload }));
+    const resultAction = await dispatch(fetchDataPrivate({ 
+      idredux: "topUpPost", 
+      endpoint: 'https://take-home-test-api.nutech-integrasi.app/topup', 
+      method: 'POST', 
+      body: payload, 
+      logOut: () => dispatch(logout()) }));
     if (postDataTopUp.rejected.match(resultAction)) {
       return handleRepsonseFailed();
     }

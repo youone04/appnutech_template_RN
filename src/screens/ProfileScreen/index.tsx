@@ -69,7 +69,9 @@ const ProfileScreen: React.FC = () => {
             const resultAction: any = await dispatch(fetchDataPrivate({
                 idredux: "profilePut",
                 endpoint: 'https://take-home-test-api.nutech-integrasi.app/profile/update',
-                method: 'PUT', body: payload, logOut: () => dispatch(logout())
+                method: 'PUT', 
+                body: payload, 
+                logOut: () => dispatch(logout())
             }));
             let message = resultAction.payload.data.message;
             if (fetchDataPrivate.rejected.match(resultAction)) {
@@ -151,7 +153,7 @@ const ProfileScreen: React.FC = () => {
 
     if (dataRedux?.profile?.loading) {
         return (
-            <Placeholder/>
+            <Placeholder />
         )
     }
 

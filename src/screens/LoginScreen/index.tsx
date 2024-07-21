@@ -42,7 +42,11 @@ const LoginScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
             return null
         } else {
             setNotif({ notif: false });
-            const resultAction = await dispatch(fetchData({ idredux: "loginPost", endpoint: 'https://take-home-test-api.nutech-integrasi.app/login', method: 'POST', body: dataLogin }));
+            const resultAction = await dispatch(fetchData({ 
+                idredux: "loginPost", 
+                endpoint: 'https://take-home-test-api.nutech-integrasi.app/login',
+                method: 'POST', 
+                body: dataLogin }));
             if (fetchData.rejected.match(resultAction)) {
                 setModalVisible({
                     cek: true,

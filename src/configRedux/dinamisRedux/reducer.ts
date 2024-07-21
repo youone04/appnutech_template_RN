@@ -23,7 +23,6 @@ const dataSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchData.pending, (state, action) => {
-       
         const {idredux } = action.meta.arg;
         state[idredux] = {
           items: [],
