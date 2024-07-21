@@ -10,6 +10,8 @@ import { RootState, AppDispatch } from '@configRedux/dinamisRedux/store';
 import { fetchDataPrivate } from '@configRedux/dinamisRedux/actions';
 import { logout } from '@configRedux/reducers/auth/reducerAuth';
 import Placeholder from '@components/atoms/Placeholder';
+import { isEmptyArray } from '@helper/func';
+import IsEmptyComp from '@components/atoms/IsEmpty';
 
 const TransactionScreen: React.FC = () => {
     const dispatch: AppDispatch = useDispatch();
@@ -41,14 +43,14 @@ const TransactionScreen: React.FC = () => {
         setLoading(true);
         setTimeout(async () => {
             setOffset((prev) => prev + 1);
-          const hasil:any =  await Promise.all([
-            await dispatch(fetchDataPrivate({
-                idredux: "transaction",
-                endpoint: `https://take-home-test-api.nutech-integrasi.app/transaction/history?offset=${offset + 1}&limit=${5}`,
-                method: 'GET',
-                logOut: () => dispatch(logout())
-            }))
-          ])
+            const hasil: any = await Promise.all([
+                await dispatch(fetchDataPrivate({
+                    idredux: "transaction",
+                    endpoint: `https://take-home-test-api.nutech-integrasi.app/transaction/history?offset=${offset + 1}&limit=${5}`,
+                    method: 'GET',
+                    logOut: () => dispatch(logout())
+                }))
+            ])
             setHistoruTransaction(prevData => [...prevData, ...hasil[0].payload.data.data.records])
             setLoading(false);
 
@@ -77,15 +79,18 @@ const TransactionScreen: React.FC = () => {
             <View style={{ marginVertical: 25 }}>
                 <Text style={styles.promptText}>Transaksi</Text>
             </View>
+
             <FlatList
                 data={DataHistoriTransaction}
                 keyExtractor={(item) => `${item?.invoice_number}`}
                 renderItem={CardTransaksi}
                 onEndReachedThreshold={0.5}
+                ListEmptyComponent={<IsEmptyComp/>}
             />
-            {
+            {isEmptyArray(DataHistoriTransaction) ? null :
                 loading ?
-                    <ActivityIndicator /> :
+                    <ActivityIndicator />
+                    :
                     <TouchableOpacity
                         onPress={loadMore}
                         style={styles.pembayaranButton}

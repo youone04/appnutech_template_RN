@@ -29,3 +29,5 @@ export const validateEmail = (email:string) => {
     return re.test(email);
 }
 export const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+export const isEmptyArray = (array: any) => array.length === 0 ? true : false;
