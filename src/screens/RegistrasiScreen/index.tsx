@@ -4,9 +4,14 @@ import { faAt, faLock, faUser } from '@fortawesome/free-solid-svg-icons';
 import FieldWithIcon from '@components/atoms/FieldWithIcon';
 import { DataRegistrasi, DataNotif } from "config/Type/type"
 import { validataForm, validateEmail } from '@helper/func';
-import { DataSecureEntry } from "config/Type/type";
+import { DataSecureEntry, PayloadRegistrasi} from "config/Type/type";
+
+import { useDispatch} from 'react-redux';
+import {  AppDispatch } from '@configRedux/dinamisRedux/store';
+import { fetchData } from '@configRedux/dinamisRedux/actions';
 
 const RegistrasiScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
+    const dispatch: AppDispatch = useDispatch();
     const [dataRegistrasi, setDataRegistrasi] = useState<DataRegistrasi>({
         email: "",
         namaDepan: "",
@@ -30,56 +35,47 @@ const RegistrasiScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         const invalidFields = validataForm(dataRegistrasi);
         if (invalidFields.length > 0) {
             setNotif({ notif: true });
-        } else if (dataRegistrasi.password !== dataRegistrasi.konfirmasiPassword) {
+        }
+        else if (dataRegistrasi.password !== dataRegistrasi.konfirmasiPassword) {
             return null;
-        } else if (!validateEmail(dataRegistrasi.email)) {
+        } 
+        else if (!validateEmail(dataRegistrasi.email)) {
             return null
-        } else if (dataRegistrasi.password.length < 8) {
+        } 
+        else if (dataRegistrasi.password.length < 8) {
             return null
         } else {
+            setLoading(true);
             setNotif({ notif: false });
-            const payload: object = {
+            const payload: PayloadRegistrasi = {
                 email: dataRegistrasi.email,
                 first_name: dataRegistrasi.namaDepan,
                 last_name: dataRegistrasi.namaBelakang,
                 password: dataRegistrasi.password
             };
-            postData(payload);
-        }
-    }
-    const postData = async (payload: object) => {
-        try {
-            setLoading(true);
-            const response = await fetch(`https://take-home-test-api.nutech-integrasi.app/registration`, {
-                headers: {
-                    "Content-Type": "application/json",
-                },
+            const resultAction: any = await dispatch(fetchData({
+                idredux: "registrasiPost",
+                endpoint: 'https://take-home-test-api.nutech-integrasi.app/registration',
                 method: 'POST',
-                body: JSON.stringify(payload)
-            });
-            const hasilResponse = await response.json();
-            if (hasilResponse.status !== 200) {
-                Alert.alert(hasilResponse.message)
-                setDataRegistrasi({
-                    email: "",
-                    namaDepan: "",
-                    namaBelakang: "",
-                    password: "",
-                    konfirmasiPassword: "",
-                });
+                body: payload
+            }));
+            if (fetchData.rejected.match(resultAction)) {
+                setLoading(false);
+                return Alert.alert(`${resultAction?.payload || "Gagal registrasi"} `);
+
             }
-            setLoading(false);
-        } catch (e) {
-            setLoading(false);
+            Alert.alert('Berhasil registrasi, silahkan login');
             setDataRegistrasi({
                 email: "",
                 namaDepan: "",
                 namaBelakang: "",
                 password: "",
                 konfirmasiPassword: "",
-            })
+            });
+            setLoading(false);
         }
     }
+    
     const handleSecureEntry = (konfirmasiPassword: boolean) => {
         if (konfirmasiPassword) {
             setSecureEntry(prev => {

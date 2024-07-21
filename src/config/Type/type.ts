@@ -92,3 +92,22 @@ export interface ResponseProfile {
 export interface DataTopUp {
   top_up_amount: number;
 }
+
+export interface PayloadRegistrasi {
+  email: string
+  first_name: string,
+  last_name: string,
+  password: string
+}
+
+export interface ResponseRegistrasi {
+  data: DataResponeRegistrasi;
+  endpoint: string;
+  idredux:  string;
+}
+
+export interface DataResponeRegistrasi {
+  data:    null;
+  message: string;
+  status:  number;
+}

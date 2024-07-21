@@ -1,7 +1,7 @@
 import FieldWithIcon from '@components/atoms/FieldWithIcon';
 import { faAt, faLock } from '@fortawesome/free-solid-svg-icons';
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image, ActivityIndicator } from 'react-native';
 import { _storeData } from '@helper/LocalStorage';
 import { validataForm, validateEmail } from '@helper/func';
 import { DataLogin, DataNotif } from "config/Type/type"
@@ -14,7 +14,6 @@ import { fetchData } from '@configRedux/dinamisRedux/actions';
 
 const LoginScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     const dataRedux = useSelector((state: RootState) => state.data);
-
     const dispatch: AppDispatch = useDispatch();
 
     const [notif, setNotif] = useState<DataNotif>({ notif: false });
